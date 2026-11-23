@@ -651,7 +651,7 @@
                 <p class="font-bold text-slate-900">איך מחברים ב-2 דקות (חינם לגמרי):</p>
                 <ol class="list-decimal list-inside space-y-1">
                     <li>היכנס ל-<span dir="ltr" class="font-mono text-blue-700">console.firebase.google.com</span> וצור פרויקט חדש.</li>
-                    <li>הפעל <strong>Firestore Database</strong> (במצב Production עם כללי אבטחה) ו-<strong>Authentication &rarr; Anonymous</strong>.</li>
+                    <li>הפעל <strong>Firestore Database</strong> (במצב Production עם כללי אבטחה) ו-<strong>Authentication → Anonymous</strong>.</li>
                     <li>בהגדרות הפרויקט הוסף אפליקציית Web והעתק את אובייקט ה-<span dir="ltr" class="font-mono">firebaseConfig</span> לכאן, או הדבק אותו ישירות בקבוע <span dir="ltr" class="font-mono">DEFAULT_FIREBASE_CONFIG</span> שבקוד כדי שיעבוד לכולם מיד!</li>
                 </ol>
             </div>
@@ -721,7 +721,15 @@
         const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minutes lockout after 5 failed attempts
 
         // Optional: Paste your Firebase Web App config object here once so every visitor syncs automatically!
-        const DEFAULT_FIREBASE_CONFIG = null;
+        const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCKRaaIkBlouZbCFfAh8H3RQzsDByIKMr4",
+  authDomain: "aac-english-course.firebaseapp.com",
+  projectId: "aac-english-course",
+  storageBucket: "aac-english-course.firebasestorage.app",
+  messagingSenderId: "957240810402",
+  appId: "1:957240810402:web:763ba44d5befa4eed770fb",
+  measurementId: "G-2G56STH729"
+};
 
         const DEFAULT_SETTINGS = {
             pinnedVisible: true,
@@ -1911,11 +1919,11 @@
         function escapeHTML(str) {
             if (!str) return "";
             return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/"/g, """)
+                .replace(/'/g, "'");
         }
 
         function showToast(msg, type = "info") {
