@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>קורס אנגלית — רמת בסיסי | מכללת אשקלון</title>
+    
+    <!-- Google Fonts: Heebo & Assistant -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'Assistant', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Heebo', 'Assistant', sans-serif;
+            background-color: #f1f5f9;
+            color: #0f172a;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .calendar-cell {
+            min-height: 92px;
+            transition: all 0.15s ease;
+        }
+        @media (max-width: 640px) {
+            .calendar-cell {
+                min-height: 68px;
+            }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-sky-100 selection:text-sky-900">
+
+    <!-- Admin Top Control Bar (Hidden until password Qwer1234 is entered) -->
+    <div id="admin-toolbar" class="hidden sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-sky-500/40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <span class="font-bold text-sm sm:text-base">מצב ניהול פעיל</span>
+                <span id="sync-status-badge" class="text-xs bg-slate-800 text-sky-300 px-2.5 py-0.5 rounded-full border border-slate-700">
+                    מסונכרן
+                </span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <button onclick="openEventModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>הוספת אירוע</span>
+                </button>
+                <button onclick="openHeaderEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-bullhorn"></i>
+                    <span>הודעה נעוצה</span>
+                </button>
+                <button onclick="openLinksEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-link"></i>
+                    <span>עריכת קישורים</span>
+                </button>
+                <button onclick="logoutAdmin()" class="bg-rose-600/90 hover:bg-rose-600 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>התנתק</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clean Bright Landing Page Header -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-5xl mx-auto px-4 pt-6 pb-8 sm:pt-8 sm:pb-10">
+            <!-- Top Row: Date Badge + Admin Login Button -->
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <div class="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium">
+                    <i class="fa-regular fa-calendar text-blue-600"></i>
+                    <span id="current-date-display">טוען תאריך...</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openShareInfoModal()" class="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span>שיתוף לווטסאפ</span>
+                    </button>
+
+                    <button id="header-admin-btn" onclick="openPasswordModal()" class="text-xs sm:text-sm text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 border border-slate-200 px-4 py-1.5 rounded-full transition flex items-center gap-2 font-semibold">
+                        <i class="fa-solid fa-lock text-xs text-blue-600"></i>
+                        <span>כניסת מנהל</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Course Title & Lecturer -->
+            <div class="space-y-2">
+                <div class="inline-flex items-center gap-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                    <span>לוח אירועים ועדכונים קבוצתי</span>
+                </div>
+                <h1 id="site-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                    אנגלית — רמת בסיסי | מכללת אשקלון
+                </h1>
+                <p id="site-subtitle" class="text-slate-600 text-base sm:text-lg font-medium">
+                    המרצה: בלה בוטראשוילי
+                </p>
+            </div>
+
+            <!-- Pinned Announcement Banner -->
+            <div id="pinned-banner-wrapper" class="mt-6 fade-in">
+                <div class="bg-blue-50/80 border border-blue-200/90 border-r-4 border-r-blue-600 rounded-xl p-4 flex items-start justify-between gap-3">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg shrink-0 mt-0.5">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-blue-800 block mb-0.5">הודעה נעוצה לקבוצה</span>
+                            <p id="pinned-banner-text" class="text-slate-800 text-sm sm:text-base font-medium leading-relaxed">
+                                ברוכים הבאים! ביום ראשון 29/11 יתקיים מבחן אמצע החל מהשעה 15:30, וביום שני 30/11 יתקיימו מפגשים אישיים לפרזנטציות בין השעות 09:00–10:30.
+                            </p>
+                        </div>
+                    </div>
+                    <button onclick="openHeaderEditModal()" class="admin-only-control hidden shrink-0 text-blue-700 hover:bg-blue-100 p-2 rounded-lg transition" title="ערוך הודעה נעוצה">
+                        <i class="fa-solid fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-7 space-y-6">
+
+        <!-- Filter Pills + Quick Links Row -->
+        <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs space-y-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <!-- Category Pills -->
+                <div id="category-filters" class="flex flex-wrap items-center gap-1.5">
+                    <button data-filter="all" class="filter-btn active px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition bg-blue-600 text-white shadow-xs">
+                        הכל
+                    </button>
+                    <button data-filter="exam" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        מבחנים
+                    </button>
+                    <button data-filter="presentation" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        פרזנטציות
+                    </button>
+                    <button data-filter="assignment" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        הגשות
+                    </button>
+                    <button data-filter="general" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
+                        הודעות
+                    </button>
+                </div>
+
+                <!-- Quick Open Calendar Button inside page as well -->
+                <button onclick="openCalendarModal()" class="self-start md:self-auto text-xs sm:text-sm font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-1.5 rounded-xl transition flex items-center gap-2">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <span>פתיחת לוח שנה אינטראקטיבי</span>
+                </button>
+            </div>
+
+            <!-- Quick Links Row -->
+            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+                <div id="quick-links-container" class="flex flex-wrap items-center gap-2">
+                    <!-- Populated dynamically -->
+                </div>
+                <button onclick="openLinksEditModal()" class="admin-only-control hidden text-xs font-semibold text-slate-600 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition items-center gap-1.5">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>ערוך קישורים</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Main Events Feed -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">אירועי הקורס הקרובים</h2>
+                    <p class="text-xs sm:text-sm text-slate-500">עדכונים שוטפים של המרצה בלה בוטראשוילי — מכללת אשקלון</p>
+                </div>
+                <button onclick="openEventModal()" class="admin-only-control hidden bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition items-center gap-1.5">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>הוסף אירוע</span>
+                </button>
+            </div>
+
+            <div id="events-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Event cards rendered dynamically -->
+            </div>
+
+            <div id="empty-state" class="hidden bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center">
+                <i class="fa-regular fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
+                <p class="text-base font-bold text-slate-700">אין אירועים להצגה בסינון זה</p>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">נסה לבחור קטגוריה אחרת או לפתוח את לוח השנה.</p>
+            </div>
+        </section>
+
+        <!-- WhatsApp Sharing & Publishing Note Card -->
+        <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-lg">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900">שיתוף הקישור לקבוצת הוואטסאפ של הקורס</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">
+                        כדי שכל הסטודנטים בקבוצה יראו את העדכונים החיים שלך מכל טלפון או מחשב, העלה את קובץ ה-<code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">index.html</code> לאחסון אינטרנטי (כגון GitHub Pages, Netlify או Vercel) ושלח את הקישור לקבוצת הוואטסאפ.
+                    </p>
+                </div>
+            </div>
+            <button onclick="openShareInfoModal()" class="shrink-0 text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+                <i class="fa-solid fa-share-nodes"></i>
+                <span>פרטים והעתקת קישור</span>
+            </button>
+        </section>
+    </main>
+
+    <!-- Floating / Side Illustrated Calendar Object (אובייקט בצד ציור לוח שנה) -->
+    <button id="side-calendar-widget" onclick="openCalendarModal()" aria-label="פתיחת לוח שנה"
+        class="fixed left-3 sm:left-5 bottom-5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-40 group flex items-center gap-2.5 bg-white hover:bg-blue-50/90 border border-slate-200 hover:border-blue-300 rounded-2xl p-2 sm:p-2.5 shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer">
+        <!-- Custom Illustrated Calendar SVG -->
+        <div class="relative w-12 h-14 sm:w-14 sm:h-16 shrink-0 select-none">
+            <svg viewBox="0 0 64 72" class="w-full h-full drop-shadow-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Calendar Body -->
+                <rect x="4" y="10" width="56" height="58" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2.5"/>
+                <!-- Top Header Bar -->
+                <path d="M4 22C4 15.3726 9.37258 10 16 10H48C54.6274 10 60 15.3726 60 22V27H4V22Z" fill="#2563EB"/>
+                <!-- Binder Rings -->
+                <rect x="16" y="4" width="5" height="11" rx="2.5" fill="#1E293B"/>
+                <rect x="43" y="4" width="5" height="11" rx="2.5" fill="#1E293B"/>
+                <!-- Calendar Grid Dots / Highlight -->
+                <rect x="12" y="34" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
+                <rect x="27.5" y="34" width="9" height="8" rx="2.5" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+                <rect x="43" y="34" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
+                <rect x="12" y="48" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
+                <rect x="27.5" y="48" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
+                <circle cx="47.5" cy="52" r="4" fill="#10B981"/>
+            </svg>
+            <!-- Day Number Overlay -->
+            <span id="widget-day-number" class="absolute inset-x-0 bottom-2 text-center text-[11px] font-extrabold text-slate-700 pointer-events-none">
+                29/11
+            </span>
+        </div>
+
+        <!-- Label -->
+        <div class="hidden sm:flex flex-col text-right pr-0.5 pl-1">
+            <span class="text-xs font-extrabold text-slate-900 group-hover:text-blue-700 transition">לוח שנה</span>
+            <span class="text-[11px] text-slate-500 font-medium">צפייה ועדכון</span>
+        </div>
+    </button>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-5 mt-auto">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500">
+            <div>
+                <span>אנגלית — רמת בסיסי | המרצה: בלה בוטראשוילי | מכללת אשקלון</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="openCalendarModal()" class="text-slate-600 hover:text-blue-700 font-medium transition">
+                    לוח שנה
+                </button>
+                <button id="footer-admin-btn" onclick="openPasswordModal()" class="text-slate-600 hover:text-blue-700 font-medium transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i>
+                    <span>כניסת מנהל</span>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-20 sm:bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- 1. Interactive Calendar Modal -->
+    <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in my-auto">
+            <!-- Modal Top Bar -->
+            <div class="bg-slate-50 border-b border-slate-200 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                        <i class="fa-regular fa-calendar-days text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 id="calendar-month-year" class="text-lg sm:text-xl font-extrabold text-slate-900">נובמבר 2026</h3>
+                        <p class="text-xs text-slate-500">בחר תאריך לצפייה באירועים — מנהלים מחוברים יכולים להוסיף ולערוך אירועים</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                    <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition" title="חודש קודם">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                    <button onclick="goToToday()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold transition">
+                        היום
+                    </button>
+                    <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition" title="חודש הבא">
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                    <button onclick="closeModal('calendar-modal')" class="mr-2 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition" title="סגור לוח שנה">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Calendar Body: Grid + Selected Day Panel -->
+            <div class="grid grid-cols-1 lg:grid-cols-12">
+                <!-- 7-Day Grid -->
+                <div class="lg:col-span-7 border-b lg:border-b-0 lg:border-l border-slate-200">
+                    <div class="grid grid-cols-7 bg-slate-100/80 border-b border-slate-200 text-center py-2 text-xs font-bold text-slate-600">
+                        <div>א'</div>
+                        <div>ב'</div>
+                        <div>ג'</div>
+                        <div>ד'</div>
+                        <div>ה'</div>
+                        <div>ו'</div>
+                        <div class="text-slate-400">שבת</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-x-reverse divide-y divide-slate-200/80 bg-white">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Selected Day Events & Admin Actions -->
+                <div class="lg:col-span-5 bg-slate-50/70 p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <h4 id="selected-day-title" class="text-sm sm:text-base font-extrabold text-slate-900">
+                                אירועים ליום הנבחר
+                            </h4>
+                            <button onclick="openEventModalForSelectedDate()" class="admin-only-control hidden text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl transition items-center gap-1">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>הוסף לתאריך</span>
+                            </button>
+                        </div>
+
+                        <div id="selected-day-events" class="space-y-2.5 max-h-[360px] overflow-y-auto pl-1">
+                            <!-- Rendered dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Admin Prompt inside Calendar if not logged in -->
+                    <div id="calendar-guest-note" class="bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-600 flex items-center justify-between gap-2">
+                        <span>לעדכון או הוספת אירועים בלוח השנה נדרשת כניסת מנהל.</span>
+                        <button onclick="closeModal('calendar-modal'); openPasswordModal();" class="shrink-0 font-bold text-blue-600 hover:text-blue-800 underline">
+                            כניסת מנהל
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Password Login Modal -->
+    <div id="password-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 fade-in">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                        <i class="fa-solid fa-lock text-base"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-900">כניסת מנהל</h3>
+                        <p class="text-xs text-slate-500">הזן סיסמה לפתיחת אפשרויות עריכה ועדכון</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('password-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handlePasswordSubmit(event)" class="space-y-4">
+                <div>
+                    <label for="admin-password-input" class="block text-sm font-semibold text-slate-700 mb-1.5">סיסמת עריכה</label>
+                    <div class="relative">
+                        <input type="password" id="admin-password-input" required placeholder="הזן סיסמה..." dir="ltr"
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition text-left font-mono">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600" title="הצג/הסתר סיסמה">
+                            <i id="password-eye-icon" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                    <p id="password-error-msg" class="hidden text-rose-600 text-xs font-semibold mt-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        <span>סיסמה שגויה. נסה שוב.</span>
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('password-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                        כניסה
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. Add / Edit Event Modal -->
+    <div id="event-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in my-8">
+            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+                <h3 id="event-modal-title" class="text-xl font-extrabold text-slate-900">הוספת אירוע</h3>
+                <button onclick="closeModal('event-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="event-form" onsubmit="handleEventSubmit(event)" class="space-y-4">
+                <input type="hidden" id="event-id">
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">כותרת האירוע *</label>
+                    <input type="text" id="event-title" required placeholder="לדוגמה: מבחן אמצע / מפגשים אישיים לפרזנטציות"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">תאריך *</label>
+                        <input type="date" id="event-date" required
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">שעת התחלה</label>
+                        <input type="time" id="event-start-time"
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">שעת סיום</label>
+                        <input type="time" id="event-end-time"
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">קטגוריה *</label>
+                        <select id="event-category" required
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm bg-white">
+                            <option value="exam">מבחנים</option>
+                            <option value="presentation">פרזנטציות</option>
+                            <option value="assignment">הגשות</option>
+                            <option value="general">הודעות</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">מיקום / כיתה</label>
+                        <input type="text" id="event-location" placeholder="לדוגמה: בניין 3, כיתה 104 / מכללת אשקלון"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">תיאור והנחיות לקבוצה *</label>
+                    <textarea id="event-description" rows="3" required placeholder="פרטים נוספים לסטודנטים בקורס..."
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"></textarea>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" id="event-completed" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                    <label for="event-completed" class="text-sm font-medium text-slate-700">סמן אירוע כהושלם</label>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeModal('event-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                        שמור אירוע
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. Edit Pinned Banner Modal -->
+    <div id="header-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in">
+            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+                <h3 class="text-xl font-extrabold text-slate-900">עריכת הודעה נעוצה</h3>
+                <button onclick="closeModal('header-edit-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleHeaderEditSubmit(event)" class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <label class="text-sm font-semibold text-slate-700">תוכן ההודעה</label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="edit-pinned-visible" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                        <span class="text-xs font-medium text-slate-600">הצג באנר הודעה</span>
+                    </label>
+                </div>
+                <textarea id="edit-pinned-text" rows="4"
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"></textarea>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('header-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                        שמור הודעה
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. Edit Quick Links Modal -->
+    <div id="links-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in">
+            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+                <h3 class="text-xl font-extrabold text-slate-900">עריכת קישורים מהירים</h3>
+                <button onclick="closeModal('links-edit-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form onsubmit="handleLinksEditSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור למודל (Moodle)</label>
+                    <input type="url" id="link-moodle" required dir="ltr"
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור לפורטל סטודנטים</label>
+                    <input type="url" id="link-portal" required dir="ltr"
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור לקבוצת הוואטסאפ</label>
+                    <input type="url" id="link-whatsapp" required dir="ltr"
+                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeModal('links-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                        ביטול
+                    </button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                        שמור קישורים
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. WhatsApp Sharing & Hosting Info Modal -->
+    <div id="share-info-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-slate-900">שיתוף לקבוצת הוואטסאפ ופרסום חי</h3>
+                </div>
+                <button onclick="closeModal('share-info-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-sm text-slate-700 leading-relaxed">
+                <p>
+                    <strong>איך שולחים לקבוצת הוואטסאפ?</strong><br>
+                    ברגע שהאתר מפורסם בכתובת אינטרנט (למשל דרך GitHub Pages, Netlify או Vercel), כל מה שצריך לעשות הוא לשלוח את הקישור לקבוצת הוואטסאפ של הקורס.
+                </p>
+                <p>
+                    <strong>איך כולם רואים את העדכונים בזמן אמת?</strong><br>
+                    כשאתה נכנס עם סיסמת המנהל ומעדכן אירוע, שעה או הודעה נעוצה, הנתונים נשמרים בענן ומתעדכנים אוטומטית אצל כל מי שנכנס לקישור (ואם אין חיבור ענן פעיל, נשמרת גרסה מקומית בדפדפן).
+                </p>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-500 mb-1">כתובת הקישור הנוכחית</label>
+                <div class="flex items-center gap-2">
+                    <input type="text" id="current-page-url" readonly dir="ltr"
+                        class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono text-slate-700">
+                    <button onclick="copyCurrentUrl()" class="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                        העתק
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="closeModal('share-info-modal')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                    סגור
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Delete Confirmation Modal -->
+    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 fade-in text-center">
+            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
+                <i class="fa-solid fa-trash-can"></i>
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">מחיקת אירוע</h3>
+            <p class="text-sm text-slate-500 mb-5">האם למחוק אירוע זה מלוח הקורס?</p>
+            <div class="flex items-center justify-center gap-3">
+                <button onclick="closeModal('delete-confirm-modal')" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                    ביטול
+                </button>
+                <button id="confirm-delete-btn" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition">
+                    מחק
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic & Firestore / LocalStorage Sync -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const ADMIN_PASS = "Qwer1234";
+        const STORAGE_KEY = "aac_bella_english_landing_v3";
+
+        const DEFAULT_SETTINGS = {
+            pinnedVisible: true,
+            pinnedText: "ברוכים הבאים! ביום ראשון 29/11 יתקיים מבחן אמצע החל מהשעה 15:30, וביום שני 30/11 יתקיימו מפגשים אישיים לפרזנטציות בין השעות 09:00–10:30.",
+            links: {
+                moodle: "https://moodle.aac.ac.il",
+                portal: "https://portal.aac.ac.il",
+                whatsapp: "https://chat.whatsapp.com"
+            }
+        };
+
+        const DEFAULT_EVENTS = [
+            {
+                id: "ev-2026-11-29-midterm",
+                title: "מבחן אמצע",
+                date: "2026-11-29",
+                startTime: "15:30",
+                endTime: "",
+                category: "exam",
+                location: "מכללת אשקלון",
+                description: "מבחן אמצע בקורס אנגלית רמת בסיסי עם המרצה בלה בוטראשוילי. נא להגיע בזמן.",
+                completed: false
+            },
+            {
+                id: "ev-2026-11-30-presentations",
+                title: "מפגשים אישיים לפרזנטציות",
+                date: "2026-11-30",
+                startTime: "09:00",
+                endTime: "10:30",
+                category: "presentation",
+                location: "מכללת אשקלון",
+                description: "מפגשים אישיים לפרזנטציות מול המרצה בלה בוטראשוילי בין השעות 09:00 ל-10:30.",
+                completed: false
+            }
+        ];
+
+        const CATEGORIES = {
+            exam: {
+                label: "מבחנים",
+                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+                dotClass: "bg-rose-500",
+                icon: "fa-solid fa-file-signature"
+            },
+            presentation: {
+                label: "פרזנטציות",
+                badgeClass: "bg-purple-50 text-purple-700 border-purple-200",
+                dotClass: "bg-purple-500",
+                icon: "fa-solid fa-person-chalkboard"
+            },
+            assignment: {
+                label: "הגשות",
+                badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
+                dotClass: "bg-amber-500",
+                icon: "fa-solid fa-file-pen"
+            },
+            general: {
+                label: "הודעות",
+                badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
+                dotClass: "bg-blue-500",
+                icon: "fa-solid fa-circle-info"
+            }
+        };
+
+        const HEBREW_MONTHS = [
+            "ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני",
+            "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"
+        ];
+
+        let state = {
+            isAdmin: false,
+            activeFilter: "all",
+            viewYear: 2026,
+            viewMonth: 10, // November 2026
+            selectedDate: "2026-11-29",
+            settings: structuredClone(DEFAULT_SETTINGS),
+            events: structuredClone(DEFAULT_EVENTS),
+            useCloud: false
+        };
+
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'aac-bella-english-course';
+
+        async function initApp() {
+            renderCurrentDate();
+            setupFilterListeners();
+            document.getElementById('current-page-url').value = window.location.href;
+
+            if (sessionStorage.getItem("aac_bella_admin_auth") === "true") {
+                enableAdminMode(false);
+            }
+
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+
+                    const cred = (typeof __initial_auth_token !== 'undefined' && __initial_auth_token)
+                        ? await signInWithCustomToken(auth, __initial_auth_token)
+                        : await signInAnonymously(auth);
+
+                    currentUser = cred.user;
+                    if (currentUser) {
+                        state.useCloud = true;
+                        updateSyncBadge("מחובר לענן", "emerald");
+                        subscribeToFirestore();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Firestore unavailable, falling back to localStorage:", err);
+            }
+
+            state.useCloud = false;
+            updateSyncBadge("שמירה מקומית", "amber");
+            loadFromLocalStorage();
+            renderAll();
+        }
+
+        function subscribeToFirestore() {
+            if (!db || !currentUser) return;
+
+            const settingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main');
+            onSnapshot(settingsRef, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    state.settings = {
+                        ...DEFAULT_SETTINGS,
+                        ...data,
+                        links: { ...DEFAULT_SETTINGS.links, ...(data.links || {}) }
+                    };
+                } else {
+                    setDoc(settingsRef, DEFAULT_SETTINGS).catch(console.error);
+                }
+                renderPinnedBanner();
+                renderQuickLinks();
+            }, (err) => console.error("Settings listener error:", err));
+
+            const eventsRef = collection(db, 'artifacts', appId, 'public', 'data', 'course_events');
+            onSnapshot(eventsRef, (snap) => {
+                if (snap.empty) {
+                    if (!localStorage.getItem("aac_bella_seeded_v3")) {
+                        localStorage.setItem("aac_bella_seeded_v3", "true");
+                        DEFAULT_EVENTS.forEach(ev => {
+                            const { id, ...rest } = ev;
+                            addDoc(eventsRef, rest).catch(console.error);
+                        });
+                        return;
+                    }
+                    state.events = [];
+                } else {
+                    state.events = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                }
+                renderAll();
+            }, (err) => console.error("Events listener error:", err));
+        }
+
+        function loadFromLocalStorage() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed.settings) {
+                        state.settings = {
+                            ...DEFAULT_SETTINGS,
+                            ...parsed.settings,
+                            links: { ...DEFAULT_SETTINGS.links, ...(parsed.settings.links || {}) }
+                        };
+                    }
+                    if (Array.isArray(parsed.events)) {
+                        state.events = parsed.events;
+                    }
+                }
+            } catch (e) {
+                console.error("LocalStorage read error:", e);
+            }
+        }
+
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify({
+                    settings: state.settings,
+                    events: state.events
+                }));
+            } catch (e) {
+                console.error("LocalStorage save error:", e);
+            }
+        }
+
+        function renderAll() {
+            renderPinnedBanner();
+            renderQuickLinks();
+            renderEventsFeed();
+            renderCalendar();
+            renderSelectedDayDetails();
+            updateWidgetBadge();
+        }
+
+        function renderCurrentDate() {
+            const now = new Date();
+            document.getElementById('current-date-display').textContent = new Intl.DateTimeFormat('he-IL', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(now);
+        }
+
+        function updateWidgetBadge() {
+            const nextEvent = [...state.events]
+                .sort((a, b) => (a.date || "").localeCompare(b.date || ""))[0];
+            const el = document.getElementById('widget-day-number');
+            if (nextEvent && nextEvent.date) {
+                const parts = nextEvent.date.split('-');
+                el.textContent = `${Number(parts[2])}/${Number(parts[1])}`;
+            } else {
+                const now = new Date();
+                el.textContent = `${now.getDate()}/${now.getMonth() + 1}`;
+            }
+        }
+
+        function renderPinnedBanner() {
+            const wrapper = document.getElementById('pinned-banner-wrapper');
+            const textEl = document.getElementById('pinned-banner-text');
+            if (state.settings.pinnedVisible && state.settings.pinnedText.trim()) {
+                wrapper.classList.remove('hidden');
+                textEl.textContent = state.settings.pinnedText;
+            } else {
+                wrapper.classList.add('hidden');
+            }
+        }
+
+        function renderQuickLinks() {
+            const container = document.getElementById('quick-links-container');
+            const links = state.settings.links || DEFAULT_SETTINGS.links;
+            const items = [
+                { label: "מודל (Moodle)", url: links.moodle, icon: "fa-solid fa-book-open" },
+                { label: "פורטל סטודנטים", url: links.portal, icon: "fa-solid fa-user-graduate" },
+                { label: "קבוצת וואטסאפ", url: links.whatsapp, icon: "fa-brands fa-whatsapp" }
+            ];
+
+            container.innerHTML = items.map(item => `
+                <a href="${escapeHTML(item.url || '#')}" target="_blank" rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-700 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3.5 py-1.5 rounded-xl transition">
+                    <i class="${item.icon} text-blue-600"></i>
+                    <span>${escapeHTML(item.label)}</span>
+                    <i class="fa-solid fa-arrow-up-left text-[10px] text-slate-400"></i>
+                </a>
+            `).join('');
+        }
+
+        function renderEventsFeed() {
+            const container = document.getElementById('events-feed-container');
+            const emptyState = document.getElementById('empty-state');
+
+            const filtered = state.events
+                .filter(ev => state.activeFilter === "all" || ev.category === state.activeFilter)
+                .sort((a, b) => {
+                    const dCmp = (a.date || "").localeCompare(b.date || "");
+                    if (dCmp !== 0) return dCmp;
+                    return (a.startTime || "").localeCompare(b.startTime || "");
+                });
+
+            if (filtered.length === 0) {
+                container.innerHTML = "";
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            container.innerHTML = filtered.map(ev => {
+                const cat = CATEGORIES[ev.category] || CATEGORIES.general;
+                const timeText = formatTimeRange(ev.startTime, ev.endTime);
+                const dateText = formatFullHebrewDate(ev.date);
+                const isDone = Boolean(ev.completed);
+
+                return `
+                    <article class="bg-white rounded-2xl p-5 border border-slate-200/90 hover:border-blue-300 shadow-xs transition flex flex-col justify-between fade-in ${isDone ? 'opacity-70' : ''}">
+                        <div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                                <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${cat.badgeClass}">
+                                    <i class="${cat.icon}"></i>
+                                    <span>${cat.label}</span>
+                                </span>
+                                ${isDone ? `<span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">הושלם</span>` : ''}
+                            </div>
+
+                            <h3 class="text-lg font-extrabold text-slate-900 mb-1.5 ${isDone ? 'line-through text-slate-500' : ''}">
+                                ${escapeHTML(ev.title)}
+                            </h3>
+
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-semibold text-slate-600 mb-2.5">
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-regular fa-calendar text-blue-600"></i>
+                                    <span>${dateText}</span>
+                                </span>
+                                <span class="inline-flex items-center gap-1.5">
+                                    <i class="fa-regular fa-clock text-blue-600"></i>
+                                    <span>${timeText}</span>
+                                </span>
+                                ${ev.location ? `
+                                    <span class="inline-flex items-center gap-1.5 text-slate-600">
+                                        <i class="fa-solid fa-location-dot text-blue-600"></i>
+                                        <span>${escapeHTML(ev.location)}</span>
+                                    </span>
+                                ` : ''}
+                            </div>
+
+                            <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                                ${escapeHTML(ev.description)}
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                            <button onclick="openCalendarOnDate('${ev.date}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                                <i class="fa-regular fa-calendar-days"></i>
+                                <span>הצג בלוח שנה</span>
+                            </button>
+
+                            ${state.isAdmin ? `
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="toggleEventCompleted('${ev.id}')" title="סמן כהושלם"
+                                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700'} transition">
+                                        <i class="fa-solid fa-check"></i>
+                                    </button>
+                                    <button onclick="openEventModal('${ev.id}')" title="ערוך אירוע"
+                                        class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold transition">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </button>
+                                    <button onclick="promptDeleteEvent('${ev.id}')" title="מחק אירוע"
+                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        // ==================== CALENDAR MODAL LOGIC ====================
+
+        window.openCalendarModal = function() {
+            openModal('calendar-modal');
+            renderCalendar();
+            renderSelectedDayDetails();
+        };
+
+        window.openCalendarOnDate = function(isoDate) {
+            if (isoDate) {
+                const [y, m] = isoDate.split('-').map(Number);
+                state.viewYear = y;
+                state.viewMonth = m - 1;
+                state.selectedDate = isoDate;
+            }
+            openCalendarModal();
+        };
+
+        window.changeMonth = function(delta) {
+            state.viewMonth += delta;
+            if (state.viewMonth > 11) {
+                state.viewMonth = 0;
+                state.viewYear++;
+            } else if (state.viewMonth < 0) {
+                state.viewMonth = 11;
+                state.viewYear--;
+            }
+            renderCalendar();
+        };
+
+        window.goToToday = function() {
+            const now = new Date();
+            state.viewYear = now.getFullYear();
+            state.viewMonth = now.getMonth();
+            state.selectedDate = toISODate(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            renderCalendar();
+            renderSelectedDayDetails();
+        };
+
+        window.selectCalendarDate = function(isoDate) {
+            state.selectedDate = isoDate;
+            renderCalendar();
+            renderSelectedDayDetails();
+        };
+
+        function renderCalendar() {
+            const monthTitle = document.getElementById('calendar-month-year');
+            const grid = document.getElementById('calendar-grid');
+            if (!monthTitle || !grid) return;
+
+            monthTitle.textContent = `${HEBREW_MONTHS[state.viewMonth]} ${state.viewYear}`;
+
+            const firstDay = new Date(state.viewYear, state.viewMonth, 1).getDay();
+            const daysInMonth = new Date(state.viewYear, state.viewMonth + 1, 0).getDate();
+            const todayISO = getTodayISO();
+
+            const byDate = {};
+            state.events.forEach(ev => {
+                if (!ev.date) return;
+                if (!byDate[ev.date]) byDate[ev.date] = [];
+                byDate[ev.date].push(ev);
+            });
+
+            let html = "";
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 p-1.5"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isoDate = toISODate(state.viewYear, state.viewMonth + 1, day);
+                const dayEvents = byDate[isoDate] || [];
+                const isSelected = state.selectedDate === isoDate;
+                const isToday = todayISO === isoDate;
+
+                const dotsHTML = dayEvents.slice(0, 3).map(ev => {
+                    const cat = CATEGORIES[ev.category] || CATEGORIES.general;
+                    return `<div class="text-[10px] font-bold truncate px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full shrink-0 ${cat.dotClass}"></span>
+                        <span class="truncate">${escapeHTML(ev.title)}</span>
+                    </div>`;
+                }).join('');
+
+                html += `
+                    <div onclick="selectCalendarDate('${isoDate}')"
+                        class="min-h-[76px] sm:min-h-[88px] p-1.5 cursor-pointer flex flex-col justify-between transition ${
+                            isSelected ? 'bg-blue-50/90 ring-2 ring-inset ring-blue-600' : 'bg-white hover:bg-slate-50'
+                        }">
+                        <div class="flex items-center justify-between">
+                            <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
+                                isToday ? 'bg-slate-900 text-white' : isSelected ? 'bg-blue-600 text-white' : 'text-slate-700'
+                            }">${day}</span>
+
+                            ${state.isAdmin ? `
+                                <button type="button" onclick="event.stopPropagation(); openEventModal(null, '${isoDate}')"
+                                    class="w-5 h-5 rounded-md bg-blue-100 hover:bg-blue-600 text-blue-700 hover:text-white flex items-center justify-center text-[10px] transition"
+                                    title="הוסף אירוע לתאריך זה">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div class="space-y-1 mt-1">
+                            ${dotsHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const total = firstDay + daysInMonth;
+            const rem = total % 7;
+            if (rem !== 0) {
+                for (let i = 0; i < 7 - rem; i++) {
+                    html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 p-1.5"></div>`;
+                }
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function renderSelectedDayDetails() {
+            const titleEl = document.getElementById('selected-day-title');
+            const container = document.getElementById('selected-day-events');
+            const guestNote = document.getElementById('calendar-guest-note');
+            if (!titleEl || !container) return;
+
+            if (guestNote) {
+                guestNote.classList.toggle('hidden', state.isAdmin);
+            }
+
+            titleEl.textContent = `אירועים ליום ${formatFullHebrewDate(state.selectedDate)}`;
+
+            const dayEvents = state.events
+                .filter(ev => ev.date === state.selectedDate)
+                .sort((a, b) => (a.startTime || "").localeCompare(b.startTime || ""));
+
+            if (dayEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-4 border border-slate-200 text-xs sm:text-sm text-slate-500 text-center">
+                        אין אירועים מתוכננים לתאריך זה.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = dayEvents.map(ev => {
+                const cat = CATEGORIES[ev.category] || CATEGORIES.general;
+                const isDone = Boolean(ev.completed);
+                return `
+                    <div class="bg-white rounded-xl p-3.5 border border-slate-200 space-y-2 ${isDone ? 'opacity-70' : ''}">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${cat.badgeClass}">
+                                <i class="${cat.icon}"></i>
+                                <span>${cat.label}</span>
+                            </span>
+                            <span class="text-xs font-bold text-slate-600">
+                                ${formatTimeRange(ev.startTime, ev.endTime)}
+                            </span>
+                        </div>
+                        <div class="font-bold text-slate-900 text-sm ${isDone ? 'line-through' : ''}">
+                            ${escapeHTML(ev.title)}
+                        </div>
+                        ${ev.location ? `<div class="text-xs text-blue-700 font-medium"><i class="fa-solid fa-location-dot ml-1"></i>${escapeHTML(ev.location)}</div>` : ''}
+                        <p class="text-xs text-slate-600 leading-relaxed">${escapeHTML(ev.description)}</p>
+                        ${state.isAdmin ? `
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
+                                <button onclick="toggleEventCompleted('${ev.id}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-semibold">
+                                    ${isDone ? 'בטל השלמה' : 'סמן כהושלם'}
+                                </button>
+                                <button onclick="openEventModal('${ev.id}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold">
+                                    ערוך
+                                </button>
+                                <button onclick="promptDeleteEvent('${ev.id}')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold">
+                                    מחק
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== FILTERS & AUTH ====================
+
+        function setupFilterListeners() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => {
+                        b.classList.remove('bg-blue-600', 'text-white', 'font-bold');
+                        b.classList.add('bg-slate-100', 'text-slate-700', 'font-semibold');
+                    });
+                    btn.classList.remove('bg-slate-100', 'text-slate-700', 'font-semibold');
+                    btn.classList.add('bg-blue-600', 'text-white', 'font-bold');
+                    state.activeFilter = btn.getAttribute('data-filter');
+                    renderEventsFeed();
+                });
+            });
+        }
+
+        window.openPasswordModal = function() {
+            if (state.isAdmin) {
+                showToast("אתה כבר מחובר כמנהל", "info");
+                return;
+            }
+            document.getElementById('admin-password-input').value = '';
+            document.getElementById('password-error-msg').classList.add('hidden');
+            openModal('password-modal');
+            setTimeout(() => document.getElementById('admin-password-input').focus(), 80);
+        };
+
+        window.togglePasswordVisibility = function() {
+            const input = document.getElementById('admin-password-input');
+            const icon = document.getElementById('password-eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        };
+
+        window.handlePasswordSubmit = function(e) {
+            e.preventDefault();
+            const pass = document.getElementById('admin-password-input').value;
+            const errEl = document.getElementById('password-error-msg');
+            if (pass === ADMIN_PASS) {
+                errEl.classList.add('hidden');
+                closeModal('password-modal');
+                enableAdminMode(true);
+            } else {
+                errEl.classList.remove('hidden');
+                document.getElementById('admin-password-input').focus();
+            }
+        };
+
+        function enableAdminMode(notify = true) {
+            state.isAdmin = true;
+            sessionStorage.setItem("aac_bella_admin_auth", "true");
+            document.getElementById('admin-toolbar').classList.remove('hidden');
+            document.getElementById('header-admin-btn').classList.add('hidden');
+            document.getElementById('footer-admin-btn').classList.add('hidden');
+            document.querySelectorAll('.admin-only-control').forEach(el => {
+                el.classList.remove('hidden');
+                if (el.tagName === 'BUTTON') el.classList.add('inline-flex');
+            });
+            renderAll();
+            if (notify) showToast("מצב עריכה הופעל", "success");
+        }
+
+        window.logoutAdmin = function() {
+            state.isAdmin = false;
+            sessionStorage.removeItem("aac_bella_admin_auth");
+            document.getElementById('admin-toolbar').classList.add('hidden');
+            document.getElementById('header-admin-btn').classList.remove('hidden');
+            document.getElementById('footer-admin-btn').classList.remove('hidden');
+            document.querySelectorAll('.admin-only-control').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('inline-flex');
+            });
+            renderAll();
+            showToast("התנתקת ממצב עריכה", "info");
+        };
+
+        // ==================== CRUD OPERATIONS ====================
+
+        window.openEventModalForSelectedDate = function() {
+            openEventModal(null, state.selectedDate);
+        };
+
+        window.openEventModal = function(eventId = null, prefillDate = null) {
+            if (!state.isAdmin) return;
+            const form = document.getElementById('event-form');
+            const titleEl = document.getElementById('event-modal-title');
+            form.reset();
+
+            if (eventId) {
+                const ev = state.events.find(item => item.id === eventId);
+                if (!ev) return;
+                titleEl.textContent = "עריכת אירוע";
+                document.getElementById('event-id').value = ev.id;
+                document.getElementById('event-title').value = ev.title || "";
+                document.getElementById('event-date').value = ev.date || "";
+                document.getElementById('event-start-time').value = ev.startTime || "";
+                document.getElementById('event-end-time').value = ev.endTime || "";
+                document.getElementById('event-category').value = ev.category || "general";
+                document.getElementById('event-location').value = ev.location || "";
+                document.getElementById('event-description').value = ev.description || "";
+                document.getElementById('event-completed').checked = Boolean(ev.completed);
+            } else {
+                titleEl.textContent = "הוספת אירוע חדש";
+                document.getElementById('event-id').value = "";
+                document.getElementById('event-date').value = prefillDate || state.selectedDate || getTodayISO();
+                document.getElementById('event-completed').checked = false;
+            }
+
+            openModal('event-modal');
+        };
+
+        window.handleEventSubmit = async function(e) {
+            e.preventDefault();
+            if (!state.isAdmin) return;
+
+            const id = document.getElementById('event-id').value;
+            const payload = {
+                title: document.getElementById('event-title').value.trim(),
+                date: document.getElementById('event-date').value,
+                startTime: document.getElementById('event-start-time').value,
+                endTime: document.getElementById('event-end-time').value,
+                category: document.getElementById('event-category').value,
+                location: document.getElementById('event-location').value.trim(),
+                description: document.getElementById('event-description').value.trim(),
+                completed: document.getElementById('event-completed').checked
+            };
+
+            closeModal('event-modal');
+
+            if (payload.date) {
+                const [y, m] = payload.date.split('-').map(Number);
+                state.viewYear = y;
+                state.viewMonth = m - 1;
+                state.selectedDate = payload.date;
+            }
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    if (id) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_events', id), payload);
+                        showToast("האירוע עודכן", "success");
+                    } else {
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'course_events'), payload);
+                        showToast("האירוע נוסף ללוח", "success");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast("שגיאה בשמירה לענן", "error");
+                }
+            } else {
+                if (id) {
+                    const idx = state.events.findIndex(item => item.id === id);
+                    if (idx !== -1) state.events[idx] = { id, ...payload };
+                    showToast("האירוע עודכן", "success");
+                } else {
+                    state.events.push({ id: "ev-" + Date.now(), ...payload });
+                    showToast("האירוע נוסף ללוח", "success");
+                }
+                saveToLocalStorage();
+                renderAll();
+            }
+        };
+
+        window.toggleEventCompleted = async function(id) {
+            if (!state.isAdmin) return;
+            const ev = state.events.find(item => item.id === id);
+            if (!ev) return;
+            const nextCompleted = !Boolean(ev.completed);
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_events', id), { completed: nextCompleted });
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                ev.completed = nextCompleted;
+                saveToLocalStorage();
+                renderAll();
+            }
+        };
+
+        let pendingDeleteId = null;
+        window.promptDeleteEvent = function(id) {
+            if (!state.isAdmin) return;
+            pendingDeleteId = id;
+            document.getElementById('confirm-delete-btn').onclick = async () => {
+                if (!pendingDeleteId) return;
+                const targetId = pendingDeleteId;
+                pendingDeleteId = null;
+                closeModal('delete-confirm-modal');
+
+                if (state.useCloud && db && currentUser) {
+                    try {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_events', targetId));
+                        showToast("האירוע נמחק", "info");
+                    } catch (err) {
+                        console.error(err);
+                        showToast("שגיאה במחיקה", "error");
+                    }
+                } else {
+                    state.events = state.events.filter(item => item.id !== targetId);
+                    saveToLocalStorage();
+                    renderAll();
+                    showToast("האירוע נמחק", "info");
+                }
+            };
+            openModal('delete-confirm-modal');
+        };
+
+        window.openHeaderEditModal = function() {
+            if (!state.isAdmin) return;
+            document.getElementById('edit-pinned-visible').checked = Boolean(state.settings.pinnedVisible);
+            document.getElementById('edit-pinned-text').value = state.settings.pinnedText || "";
+            openModal('header-edit-modal');
+        };
+
+        window.handleHeaderEditSubmit = async function(e) {
+            e.preventDefault();
+            if (!state.isAdmin) return;
+            state.settings.pinnedVisible = document.getElementById('edit-pinned-visible').checked;
+            state.settings.pinnedText = document.getElementById('edit-pinned-text').value.trim();
+            closeModal('header-edit-modal');
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
+                    showToast("ההודעה הנעוצה עודכנה", "success");
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                saveToLocalStorage();
+                renderPinnedBanner();
+                showToast("ההודעה הנעוצה עודכנה", "success");
+            }
+        };
+
+        window.openLinksEditModal = function() {
+            if (!state.isAdmin) return;
+            const links = state.settings.links || DEFAULT_SETTINGS.links;
+            document.getElementById('link-moodle').value = links.moodle || "";
+            document.getElementById('link-portal').value = links.portal || "";
+            document.getElementById('link-whatsapp').value = links.whatsapp || "";
+            openModal('links-edit-modal');
+        };
+
+        window.handleLinksEditSubmit = async function(e) {
+            e.preventDefault();
+            if (!state.isAdmin) return;
+            state.settings.links = {
+                moodle: document.getElementById('link-moodle').value.trim(),
+                portal: document.getElementById('link-portal').value.trim(),
+                whatsapp: document.getElementById('link-whatsapp').value.trim()
+            };
+            closeModal('links-edit-modal');
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
+                    showToast("הקישורים המהירים עודכנו", "success");
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                saveToLocalStorage();
+                renderQuickLinks();
+                showToast("הקישורים המהירים עודכנו", "success");
+            }
+        };
+
+        window.openShareInfoModal = function() {
+            document.getElementById('current-page-url').value = window.location.href;
+            openModal('share-info-modal');
+        };
+
+        window.copyCurrentUrl = function() {
+            const input = document.getElementById('current-page-url');
+            input.select();
+            document.execCommand('copy');
+            showToast("הקישור הועתק", "success");
+        };
+
+        // ==================== UTILITIES ====================
+
+        window.openModal = function(id) {
+            document.getElementById(id).classList.remove('hidden');
+        };
+
+        window.closeModal = function(id) {
+            document.getElementById(id).classList.add('hidden');
+        };
+
+        function updateSyncBadge(text, color) {
+            const badge = document.getElementById('sync-status-badge');
+            if (!badge) return;
+            badge.textContent = text;
+            badge.className = color === "emerald"
+                ? "text-xs bg-emerald-950 text-emerald-300 px-2.5 py-0.5 rounded-full border border-emerald-700"
+                : "text-xs bg-amber-950 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-700";
+        }
+
+        function toISODate(y, m, d) {
+            return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        }
+
+        function getTodayISO() {
+            const now = new Date();
+            return toISODate(now.getFullYear(), now.getMonth() + 1, now.getDate());
+        }
+
+        function formatFullHebrewDate(iso) {
+            if (!iso) return "";
+            const [y, m, d] = iso.split('-').map(Number);
+            return new Intl.DateTimeFormat('he-IL', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            }).format(new Date(y, m - 1, d));
+        }
+
+        function formatTimeRange(start, end) {
+            if (start && end) return `${start}–${end}`;
+            if (start) return `החל מ-${start}`;
+            return "כל היום";
+        }
+
+        function escapeHTML(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function showToast(msg, type = "info") {
+            const container = document.getElementById('toast-container');
+            const div = document.createElement('div');
+            const colors = {
+                success: "bg-emerald-600 text-white",
+                error: "bg-rose-600 text-white",
+                info: "bg-slate-800 text-white"
+            };
+            div.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-semibold fade-in`;
+            div.textContent = msg;
+            container.appendChild(div);
+            setTimeout(() => {
+                div.style.opacity = "0";
+                div.style.transition = "opacity 0.25s ease";
+                setTimeout(() => div.remove(), 250);
+            }, 2800);
+        }
+
+        initApp();
+    </script>
+</body>
+</html>
