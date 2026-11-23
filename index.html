@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="blue" data-mode="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: ['selector', '[data-mode="dark"]'],
             theme: {
                 extend: {
                     fontFamily: {
@@ -27,48 +28,103 @@
         }
     </script>
     <style>
+        :root {
+            --accent-50: #eff6ff;
+            --accent-100: #dbeafe;
+            --accent-200: #bfdbfe;
+            --accent-500: #3b82f6;
+            --accent-600: #2563eb;
+            --accent-700: #1d4ed8;
+            --accent-800: #1e40af;
+            --accent-ring: rgba(37, 99, 235, 0.25);
+        }
+
+        [data-theme="pink"] {
+            --accent-50: #fdf2f8;
+            --accent-100: #fce7f3;
+            --accent-200: #fbcfe8;
+            --accent-500: #ec4899;
+            --accent-600: #db2777;
+            --accent-700: #be185d;
+            --accent-800: #9d174d;
+            --accent-ring: rgba(219, 39, 119, 0.25);
+        }
+
         body {
             font-family: 'Heebo', 'Assistant', sans-serif;
-            background-color: #f1f5f9;
-            color: #0f172a;
+            transition: background-color 0.25s ease, color 0.25s ease;
         }
+
+        /* Theme Accent Utilities */
+        .bg-accent-600 { background-color: var(--accent-600) !important; }
+        .hover\:bg-accent-700:hover { background-color: var(--accent-700) !important; }
+        .hover\:bg-accent-500:hover { background-color: var(--accent-500) !important; }
+        .bg-accent-50 { background-color: var(--accent-50) !important; }
+        .bg-accent-100 { background-color: var(--accent-100) !important; }
+        .hover\:bg-accent-50:hover { background-color: var(--accent-50) !important; }
+        .hover\:bg-accent-100:hover { background-color: var(--accent-100) !important; }
+        .text-accent-600 { color: var(--accent-600) !important; }
+        .text-accent-700 { color: var(--accent-700) !important; }
+        .text-accent-800 { color: var(--accent-800) !important; }
+        .hover\:text-accent-700:hover { color: var(--accent-700) !important; }
+        .hover\:text-accent-800:hover { color: var(--accent-800) !important; }
+        .border-accent-100 { border-color: var(--accent-100) !important; }
+        .border-accent-200 { border-color: var(--accent-200) !important; }
+        .border-r-accent-600 { border-right-color: var(--accent-600) !important; }
+        .hover\:border-accent-300:hover { border-color: var(--accent-200) !important; }
+        .ring-accent { box-shadow: inset 0 0 0 2px var(--accent-600) !important; }
+
+        [data-mode="dark"] .bg-accent-50 { background-color: rgba(255, 255, 255, 0.06) !important; }
+        [data-mode="dark"] .bg-accent-100 { background-color: rgba(255, 255, 255, 0.1) !important; }
+        [data-mode="dark"] .text-accent-600,
+        [data-mode="dark"] .text-accent-700,
+        [data-mode="dark"] .text-accent-800 { color: #f472b6 !important; }
+        [data-mode="dark"][data-theme="blue"] .text-accent-600,
+        [data-mode="dark"][data-theme="blue"] .text-accent-700,
+        [data-mode="dark"][data-theme="blue"] .text-accent-800 { color: #60a5fa !important; }
+        [data-mode="dark"] .border-accent-200,
+        [data-mode="dark"] .border-accent-100 { border-color: rgba(148, 163, 184, 0.25) !important; }
+
         .fade-in {
-            animation: fadeIn 0.25s ease-out;
+            animation: fadeIn 0.22s ease-out;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .calendar-cell {
-            min-height: 92px;
-            transition: all 0.15s ease;
+
+        /* Draggable Floating Calendar Widget */
+        #side-calendar-widget {
+            touch-action: none;
+            user-select: none;
         }
-        @media (max-width: 640px) {
-            .calendar-cell {
-                min-height: 68px;
-            }
+        #side-calendar-widget.dragging {
+            cursor: grabbing !important;
+            transform: scale(1.04);
+            box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.25);
         }
+
         /* Custom scrollbar */
         ::-webkit-scrollbar {
             width: 7px;
             height: 7px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: transparent;
         }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        [data-mode="dark"] ::-webkit-scrollbar-thumb {
+            background: #475569;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-sky-100 selection:text-sky-900">
+<body class="min-h-screen flex flex-col antialiased bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-sky-100 selection:text-sky-900">
 
     <!-- Admin Top Control Bar (Hidden until admin authentication succeeds) -->
-    <div id="admin-toolbar" class="hidden sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-sky-500/40">
+    <div id="admin-toolbar" class="hidden sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-slate-700">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2.5">
                 <span class="flex h-3 w-3 relative">
@@ -81,7 +137,7 @@
                 </span>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <button onclick="openEventModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
+                <button onclick="openEventModal()" class="bg-accent-600 hover:bg-accent-700 text-white text-xs sm:text-sm font-semibold px-3.5 py-2 rounded-lg transition flex items-center gap-1.5">
                     <i class="fa-solid fa-plus"></i>
                     <span>הוספת אירוע</span>
                 </button>
@@ -91,7 +147,7 @@
                 </button>
                 <button onclick="openLinksEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-link"></i>
-                    <span>עריכת קישורים</span>
+                    <span>ניהול קישורים</span>
                 </button>
                 <button onclick="openCloudSetupModal()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-emerald-700/70 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-cloud"></i>
@@ -105,24 +161,47 @@
         </div>
     </div>
 
-    <!-- Clean Bright Landing Page Header -->
-    <header class="bg-white border-b border-slate-200">
-        <div class="max-w-5xl mx-auto px-4 pt-6 pb-8 sm:pt-8 sm:pb-10">
-            <!-- Top Row: Date Badge + Admin Login Button -->
+    <!-- Clean Landing Page Header -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="max-w-5xl mx-auto px-4 pt-5 pb-8 sm:pt-7 sm:pb-10">
+            <!-- Top Row: Date Badge + Theme/Mode Toggles + Share + Admin Login -->
             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
-                <div class="inline-flex items-center gap-2 bg-slate-100 text-slate-700 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium">
-                    <i class="fa-regular fa-calendar text-blue-600"></i>
+                <div class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium">
+                    <i class="fa-regular fa-calendar text-accent-600"></i>
                     <span id="current-date-display">טוען תאריך...</span>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <button onclick="openShareInfoModal()" class="text-xs sm:text-sm text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-3.5 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
-                        <i class="fa-brands fa-whatsapp text-base"></i>
-                        <span>שיתוף לווטסאפ</span>
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Color Theme Switcher (Blue / Pink) -->
+                    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-0.5" title="בחירת צבע עיצוב">
+                        <button id="theme-blue-btn" onclick="setAccentTheme('blue')" type="button"
+                            class="px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
+                            <span>כחול</span>
+                        </button>
+                        <button id="theme-pink-btn" onclick="setAccentTheme('pink')" type="button"
+                            class="px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1">
+                            <span class="w-2.5 h-2.5 rounded-full bg-pink-600 inline-block"></span>
+                            <span>ורוד</span>
+                        </button>
+                    </div>
+
+                    <!-- Light / Dark Mode Toggle -->
+                    <button id="dark-mode-toggle" onclick="toggleDarkMode()" type="button" title="מצב בהיר / כהה"
+                        class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
+                        <i id="dark-mode-icon" class="fa-solid fa-moon text-accent-600"></i>
+                        <span id="dark-mode-label" class="hidden sm:inline">מצב כהה</span>
                     </button>
 
-                    <button id="header-admin-btn" onclick="openPasswordModal()" class="text-xs sm:text-sm text-slate-700 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 border border-slate-200 px-4 py-1.5 rounded-full transition flex items-center gap-2 font-semibold">
-                        <i class="fa-solid fa-lock text-xs text-blue-600"></i>
+                    <!-- WhatsApp Share -->
+                    <button onclick="openShareInfoModal()" class="text-xs sm:text-sm text-emerald-700 dark:text-emerald-300 hover:text-emerald-800 bg-emerald-50 dark:bg-emerald-950/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 border border-emerald-200 dark:border-emerald-800 px-3.5 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
+                        <i class="fa-brands fa-whatsapp text-base"></i>
+                        <span class="hidden sm:inline">שיתוף לווטסאפ</span>
+                    </button>
+
+                    <!-- Admin Login Button -->
+                    <button id="header-admin-btn" onclick="openPasswordModal()" class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 hover:text-accent-700 bg-slate-100 dark:bg-slate-800 hover:bg-accent-50 border border-slate-200 dark:border-slate-700 px-3.5 py-1.5 rounded-full transition flex items-center gap-2 font-semibold">
+                        <i class="fa-solid fa-lock text-xs text-accent-600"></i>
                         <span>כניסת מנהל</span>
                     </button>
                 </div>
@@ -130,33 +209,33 @@
 
             <!-- Main Course Title & Lecturer -->
             <div class="space-y-2">
-                <div class="inline-flex items-center gap-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-100 px-3 py-1 rounded-full">
+                <div class="inline-flex items-center gap-2 text-xs font-bold text-accent-700 bg-accent-50 border border-accent-100 px-3 py-1 rounded-full">
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span>לוח אירועים ועדכונים קבוצתי</span>
                 </div>
-                <h1 id="site-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                <h1 id="site-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                     אנגלית — רמת בסיסי | מכללת אשקלון
                 </h1>
-                <p id="site-subtitle" class="text-slate-600 text-base sm:text-lg font-medium">
+                <p id="site-subtitle" class="text-slate-600 dark:text-slate-400 text-base sm:text-lg font-medium">
                     המרצה: בלה בוטראשוילי
                 </p>
             </div>
 
             <!-- Pinned Announcement Banner -->
             <div id="pinned-banner-wrapper" class="mt-6 fade-in">
-                <div class="bg-blue-50/80 border border-blue-200/90 border-r-4 border-r-blue-600 rounded-xl p-4 flex items-start justify-between gap-3">
+                <div class="bg-accent-50 border border-accent-200 border-r-4 border-r-accent-600 rounded-xl p-4 flex items-start justify-between gap-3">
                     <div class="flex items-start gap-3">
-                        <div class="bg-blue-100 text-blue-700 p-2 rounded-lg shrink-0 mt-0.5">
+                        <div class="bg-accent-100 text-accent-700 p-2 rounded-lg shrink-0 mt-0.5">
                             <i class="fa-solid fa-bullhorn"></i>
                         </div>
                         <div>
-                            <span class="text-xs font-bold text-blue-800 block mb-0.5">הודעה נעוצה לקבוצה</span>
-                            <p id="pinned-banner-text" class="text-slate-800 text-sm sm:text-base font-medium leading-relaxed">
+                            <span class="text-xs font-bold text-accent-800 block mb-0.5">הודעה נעוצה לקבוצה</span>
+                            <p id="pinned-banner-text" class="text-slate-800 dark:text-slate-200 text-sm sm:text-base font-medium leading-relaxed whitespace-pre-line">
                                 ברוכים הבאים! ביום ראשון 29/11 יתקיים מבחן אמצע החל מהשעה 15:30, וביום שני 30/11 יתקיימו מפגשים אישיים לפרזנטציות בין השעות 09:00–10:30.
                             </p>
                         </div>
                     </div>
-                    <button onclick="openHeaderEditModal()" class="admin-only-control hidden shrink-0 text-blue-700 hover:bg-blue-100 p-2 rounded-lg transition" title="ערוך הודעה נעוצה">
+                    <button onclick="openHeaderEditModal()" class="admin-only-control hidden shrink-0 text-accent-700 hover:bg-accent-100 p-2 rounded-lg transition" title="ערוך הודעה נעוצה">
                         <i class="fa-solid fa-pen"></i>
                     </button>
                 </div>
@@ -167,81 +246,104 @@
     <!-- Main Content -->
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-7 space-y-6">
 
-        <!-- Filter Pills + Quick Links Row -->
-        <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs space-y-4">
+        <!-- Filter Pills + Search + Quick Links Row -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <!-- Category Pills -->
+                <!-- Category Pills with Counts -->
                 <div id="category-filters" class="flex flex-wrap items-center gap-1.5">
-                    <button data-filter="all" class="filter-btn active px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition bg-blue-600 text-white shadow-xs">
-                        הכל
+                    <button data-filter="all" class="filter-btn active px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition bg-accent-600 text-white shadow-xs">
+                        הכל <span id="count-all" class="opacity-85 text-[11px] mr-0.5"></span>
                     </button>
-                    <button data-filter="exam" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-                        מבחנים
+                    <button data-filter="exam" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                        מבחנים <span id="count-exam" class="opacity-75 text-[11px] mr-0.5"></span>
                     </button>
-                    <button data-filter="presentation" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-                        פרזנטציות
+                    <button data-filter="presentation" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                        פרזנטציות <span id="count-presentation" class="opacity-75 text-[11px] mr-0.5"></span>
                     </button>
-                    <button data-filter="assignment" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-                        הגשות
+                    <button data-filter="assignment" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                        הגשות <span id="count-assignment" class="opacity-75 text-[11px] mr-0.5"></span>
                     </button>
-                    <button data-filter="general" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200">
-                        הודעות
+                    <button data-filter="general" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                        הודעות <span id="count-general" class="opacity-75 text-[11px] mr-0.5"></span>
                     </button>
                 </div>
 
-                <!-- Quick Open Calendar Button inside page as well -->
-                <button onclick="openCalendarModal()" class="self-start md:self-auto text-xs sm:text-sm font-bold text-blue-700 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 border border-blue-200 px-3.5 py-1.5 rounded-xl transition flex items-center gap-2">
+                <!-- Quick Open Calendar Button -->
+                <button onclick="openCalendarModal()" class="self-start md:self-auto text-xs sm:text-sm font-bold text-accent-700 hover:text-accent-800 bg-accent-50 hover:bg-accent-100 border border-accent-200 px-3.5 py-1.5 rounded-xl transition flex items-center gap-2">
                     <i class="fa-regular fa-calendar-days"></i>
                     <span>פתיחת לוח שנה אינטראקטיבי</span>
                 </button>
             </div>
 
+            <!-- Live Search Bar -->
+            <div class="relative">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="events-search-input" oninput="handleSearchInput(this.value)"
+                    placeholder="חיפוש מהיר באירועים, מבחנים, הנחיות או כיתה..."
+                    class="w-full pr-9 pl-9 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/70 text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:border-slate-400 transition">
+                <button id="clear-search-btn" onclick="clearSearchInput()" type="button" class="hidden absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-xs">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
             <!-- Quick Links Row -->
-            <div class="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
                 <div id="quick-links-container" class="flex flex-wrap items-center gap-2">
                     <!-- Populated dynamically -->
                 </div>
-                <button onclick="openLinksEditModal()" class="admin-only-control hidden text-xs font-semibold text-slate-600 hover:text-blue-700 bg-slate-100 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition items-center gap-1.5">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <span>ערוך קישורים</span>
-                </button>
+                <div class="admin-only-control hidden items-center gap-1.5">
+                    <button onclick="openLinksEditModal(true)" class="text-xs font-bold text-white bg-accent-600 hover:bg-accent-700 px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>הוסף קישור</span>
+                    </button>
+                    <button onclick="openLinksEditModal(false)" class="text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-accent-700 bg-slate-100 dark:bg-slate-800 hover:bg-accent-50 px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        <span>ערוך קישורים</span>
+                    </button>
+                </div>
             </div>
         </section>
 
         <!-- Main Events Feed -->
         <section class="space-y-4">
-            <div class="flex items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900">אירועי הקורס הקרובים</h2>
-                    <p class="text-xs sm:text-sm text-slate-500">עדכונים שוטפים של המרצה בלה בוטראשוילי — מכללת אשקלון</p>
+                    <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">אירועי הקורס הקרובים</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400">עדכונים שוטפים של המרצה בלה בוטראשוילי — מכללת אשקלון</p>
                 </div>
-                <button onclick="openEventModal()" class="admin-only-control hidden bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition items-center gap-1.5">
-                    <i class="fa-solid fa-plus"></i>
-                    <span>הוסף אירוע</span>
-                </button>
+                <div class="flex items-center gap-2">
+                    <label class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 cursor-pointer select-none">
+                        <input type="checkbox" id="hide-completed-toggle" onchange="toggleHideCompleted(this.checked)" class="rounded border-slate-300 dark:border-slate-700">
+                        <span>הסתר שהושלמו</span>
+                    </label>
+                    <button onclick="openEventModal()" class="admin-only-control hidden bg-accent-600 hover:bg-accent-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-xs transition items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>הוסף אירוע</span>
+                    </button>
+                </div>
             </div>
 
             <div id="events-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Event cards rendered dynamically -->
             </div>
 
-            <div id="empty-state" class="hidden bg-white rounded-2xl border border-dashed border-slate-300 p-10 text-center">
+            <div id="empty-state" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-10 text-center">
                 <i class="fa-regular fa-calendar-xmark text-3xl text-slate-400 mb-2"></i>
-                <p class="text-base font-bold text-slate-700">אין אירועים להצגה בסינון זה</p>
-                <p class="text-xs sm:text-sm text-slate-500 mt-1">נסה לבחור קטגוריה אחרת או לפתוח את לוח השנה.</p>
+                <p class="text-base font-bold text-slate-700 dark:text-slate-200">אין אירועים להצגה בסינון זה</p>
+                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">נסה לבחור קטגוריה אחרת, לנקות את החיפוש או לפתוח את לוח השנה.</p>
             </div>
         </section>
 
         <!-- WhatsApp Sharing & Publishing Note Card -->
-        <section class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-800 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-colors">
             <div class="flex items-start gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-lg">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center shrink-0 text-lg">
                     <i class="fa-brands fa-whatsapp"></i>
                 </div>
                 <div>
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900">שיתוף הקישור לקבוצת הוואטסאפ של הקורס</h3>
-                    <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">
-                        כדי שכל הסטודנטים בקבוצה יראו את העדכונים החיים שלך מכל טלפון או מחשב, העלה את קובץ ה-<code class="bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">index.html</code> לאחסון אינטרנטי (כגון GitHub Pages, Netlify או Vercel) ושלח את הקישור לקבוצת הוואטסאפ.
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">שיתוף הקישור לקבוצת הוואטסאפ של הקורס</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-0.5">
+                        כל עדכון שתבצע במצב מנהל מסתנכרן בענן ומופיע אוטומטית אצל כל הסטודנטים שנכנסים לקישור הקבוע.
                     </p>
                 </div>
             </div>
@@ -252,51 +354,56 @@
         </section>
     </main>
 
-    <!-- Floating / Side Illustrated Calendar Object (אובייקט בצד ציור לוח שנה) -->
-    <button id="side-calendar-widget" onclick="openCalendarModal()" aria-label="פתיחת לוח שנה"
-        class="fixed left-3 sm:left-5 bottom-5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 z-40 group flex items-center gap-2.5 bg-white hover:bg-blue-50/90 border border-slate-200 hover:border-blue-300 rounded-2xl p-2 sm:p-2.5 shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer">
+    <!-- Draggable Floating Illustrated Calendar Object -->
+    <div id="side-calendar-widget" role="button" tabindex="0" aria-label="פתיחת לוח שנה (ניתן לגרירה)"
+        title="לחץ לפתיחת לוח שנה — או גרור לכל מקום במסך"
+        style="left: 16px; bottom: 20px;"
+        class="fixed z-40 group flex items-center gap-2.5 bg-white dark:bg-slate-900 hover:bg-accent-50 border border-slate-200 dark:border-slate-700 hover:border-accent-300 rounded-2xl p-2 sm:p-2.5 shadow-lg hover:shadow-xl transition-shadow duration-200 cursor-grab">
+        <!-- Drag Handle Indicator -->
+        <div class="text-slate-300 dark:text-slate-600 group-hover:text-slate-400 px-0.5 text-xs" title="גרור להזזה">
+            <i class="fa-solid fa-grip-vertical"></i>
+        </div>
+
         <!-- Custom Illustrated Calendar SVG -->
-        <div class="relative w-12 h-14 sm:w-14 sm:h-16 shrink-0 select-none">
+        <div class="relative w-12 h-14 sm:w-14 sm:h-16 shrink-0 pointer-events-none">
             <svg viewBox="0 0 64 72" class="w-full h-full drop-shadow-xs" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <!-- Calendar Body -->
                 <rect x="4" y="10" width="56" height="58" rx="12" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2.5"/>
-                <!-- Top Header Bar -->
-                <path d="M4 22C4 15.3726 9.37258 10 16 10H48C54.6274 10 60 15.3726 60 22V27H4V22Z" fill="#2563EB"/>
-                <!-- Binder Rings -->
+                <path id="widget-cal-header" d="M4 22C4 15.3726 9.37258 10 16 10H48C54.6274 10 60 15.3726 60 22V27H4V22Z" fill="#2563EB"/>
                 <rect x="16" y="4" width="5" height="11" rx="2.5" fill="#1E293B"/>
                 <rect x="43" y="4" width="5" height="11" rx="2.5" fill="#1E293B"/>
-                <!-- Calendar Grid Dots / Highlight -->
                 <rect x="12" y="34" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
-                <rect x="27.5" y="34" width="9" height="8" rx="2.5" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+                <rect id="widget-cal-highlight" x="27.5" y="34" width="9" height="8" rx="2.5" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
                 <rect x="43" y="34" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
                 <rect x="12" y="48" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
                 <rect x="27.5" y="48" width="9" height="8" rx="2.5" fill="#E2E8F0"/>
                 <circle cx="47.5" cy="52" r="4" fill="#10B981"/>
             </svg>
-            <!-- Day Number Overlay -->
             <span id="widget-day-number" class="absolute inset-x-0 bottom-2 text-center text-[11px] font-extrabold text-slate-700 pointer-events-none">
                 29/11
             </span>
         </div>
 
         <!-- Label -->
-        <div class="hidden sm:flex flex-col text-right pr-0.5 pl-1">
-            <span class="text-xs font-extrabold text-slate-900 group-hover:text-blue-700 transition">לוח שנה</span>
-            <span class="text-[11px] text-slate-500 font-medium">צפייה ועדכון</span>
+        <div class="hidden sm:flex flex-col text-right pr-0.5 pl-1 pointer-events-none">
+            <span class="text-xs font-extrabold text-slate-900 dark:text-white group-hover:text-accent-700 transition">לוח שנה</span>
+            <span class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">לחץ או גרור</span>
         </div>
-    </button>
+    </div>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-5 mt-auto">
-        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500">
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-5 mt-auto transition-colors">
+        <div class="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             <div>
                 <span>אנגלית — רמת בסיסי | המרצה: בלה בוטראשוילי | מכללת אשקלון</span>
             </div>
             <div class="flex items-center gap-4">
-                <button onclick="openCalendarModal()" class="text-slate-600 hover:text-blue-700 font-medium transition">
+                <button onclick="resetWidgetPosition()" class="text-slate-500 hover:text-accent-700 font-medium transition text-xs">
+                    איפוס מיקום לוח שנה
+                </button>
+                <button onclick="openCalendarModal()" class="text-slate-600 dark:text-slate-300 hover:text-accent-700 font-medium transition">
                     לוח שנה
                 </button>
-                <button id="footer-admin-btn" onclick="openPasswordModal()" class="text-slate-600 hover:text-blue-700 font-medium transition flex items-center gap-1.5">
+                <button id="footer-admin-btn" onclick="openPasswordModal()" class="text-slate-600 dark:text-slate-300 hover:text-accent-700 font-medium transition flex items-center gap-1.5">
                     <i class="fa-solid fa-lock text-xs"></i>
                     <span>כניסת מנהל</span>
                 </button>
@@ -310,31 +417,31 @@
     <!-- ==================== MODALS ==================== -->
 
     <!-- 1. Interactive Calendar Modal -->
-    <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 overflow-hidden fade-in my-auto">
+    <div id="calendar-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden fade-in my-auto">
             <!-- Modal Top Bar -->
-            <div class="bg-slate-50 border-b border-slate-200 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
+            <div class="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs">
+                    <div class="w-10 h-10 rounded-xl bg-accent-600 text-white flex items-center justify-center shadow-xs">
                         <i class="fa-regular fa-calendar-days text-lg"></i>
                     </div>
                     <div>
-                        <h3 id="calendar-month-year" class="text-lg sm:text-xl font-extrabold text-slate-900">נובמבר 2026</h3>
-                        <p class="text-xs text-slate-500">בחר תאריך לצפייה באירועים — מנהלים מחוברים יכולים להוסיף ולערוך אירועים</p>
+                        <h3 id="calendar-month-year" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white">נובמבר 2026</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">בחר תאריך לצפייה באירועים — מנהלים מחוברים יכולים להוסיף ולערוך אירועים</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-1.5">
-                    <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition" title="חודש קודם">
+                    <button onclick="changeMonth(-1)" class="p-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 transition" title="חודש קודם">
                         <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
-                    <button onclick="goToToday()" class="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 text-xs font-bold transition">
+                    <button onclick="goToToday()" class="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 text-xs font-bold transition">
                         היום
                     </button>
-                    <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 transition" title="חודש הבא">
+                    <button onclick="changeMonth(1)" class="p-2 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 transition" title="חודש הבא">
                         <i class="fa-solid fa-chevron-left text-xs"></i>
                     </button>
-                    <button onclick="closeModal('calendar-modal')" class="mr-2 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition" title="סגור לוח שנה">
+                    <button onclick="closeModal('calendar-modal')" class="mr-2 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/70 dark:hover:bg-slate-700 transition" title="סגור לוח שנה">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
@@ -342,9 +449,8 @@
 
             <!-- Calendar Body: Grid + Selected Day Panel -->
             <div class="grid grid-cols-1 lg:grid-cols-12">
-                <!-- 7-Day Grid -->
-                <div class="lg:col-span-7 border-b lg:border-b-0 lg:border-l border-slate-200">
-                    <div class="grid grid-cols-7 bg-slate-100/80 border-b border-slate-200 text-center py-2 text-xs font-bold text-slate-600">
+                <div class="lg:col-span-7 border-b lg:border-b-0 lg:border-l border-slate-200 dark:border-slate-700">
+                    <div class="grid grid-cols-7 bg-slate-100/80 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-center py-2 text-xs font-bold text-slate-600 dark:text-slate-300">
                         <div>א'</div>
                         <div>ב'</div>
                         <div>ג'</div>
@@ -353,19 +459,19 @@
                         <div>ו'</div>
                         <div class="text-slate-400">שבת</div>
                     </div>
-                    <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-x-reverse divide-y divide-slate-200/80 bg-white">
+                    <div id="calendar-grid" class="grid grid-cols-7 divide-x divide-x-reverse divide-y divide-slate-200/80 dark:divide-slate-800 bg-white dark:bg-slate-900">
                         <!-- Rendered dynamically -->
                     </div>
                 </div>
 
                 <!-- Selected Day Events & Admin Actions -->
-                <div class="lg:col-span-5 bg-slate-50/70 p-4 sm:p-5 flex flex-col justify-between space-y-4">
+                <div class="lg:col-span-5 bg-slate-50/70 dark:bg-slate-950/60 p-4 sm:p-5 flex flex-col justify-between space-y-4">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between gap-2">
-                            <h4 id="selected-day-title" class="text-sm sm:text-base font-extrabold text-slate-900">
+                            <h4 id="selected-day-title" class="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white">
                                 אירועים ליום הנבחר
                             </h4>
-                            <button onclick="openEventModalForSelectedDate()" class="admin-only-control hidden text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-xl transition items-center gap-1">
+                            <button onclick="openEventModalForSelectedDate()" class="admin-only-control hidden text-xs font-bold bg-accent-600 hover:bg-accent-700 text-white px-3 py-1.5 rounded-xl transition items-center gap-1">
                                 <i class="fa-solid fa-plus"></i>
                                 <span>הוסף לתאריך</span>
                             </button>
@@ -376,10 +482,9 @@
                         </div>
                     </div>
 
-                    <!-- Admin Prompt inside Calendar if not logged in -->
-                    <div id="calendar-guest-note" class="bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-600 flex items-center justify-between gap-2">
+                    <div id="calendar-guest-note" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-3 text-xs text-slate-600 dark:text-slate-300 flex items-center justify-between gap-2">
                         <span>לעדכון או הוספת אירועים בלוח השנה נדרשת כניסת מנהל.</span>
-                        <button onclick="closeModal('calendar-modal'); openPasswordModal();" class="shrink-0 font-bold text-blue-600 hover:text-blue-800 underline">
+                        <button onclick="closeModal('calendar-modal'); openPasswordModal();" class="shrink-0 font-bold text-accent-600 hover:text-accent-800 underline">
                             כניסת מנהל
                         </button>
                     </div>
@@ -389,30 +494,30 @@
     </div>
 
     <!-- 2. Password Login Modal -->
-    <div id="password-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 fade-in">
+    <div id="password-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+                    <div class="w-10 h-10 rounded-xl bg-accent-100 text-accent-700 flex items-center justify-center">
                         <i class="fa-solid fa-lock text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-extrabold text-slate-900">כניסת מנהל</h3>
-                        <p class="text-xs text-slate-500">הזן סיסמה לפתיחת אפשרויות עריכה ועדכון</p>
+                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">כניסת מנהל</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">הזן סיסמה לפתיחת אפשרויות עריכה ועדכון</p>
                     </div>
                 </div>
-                <button onclick="closeModal('password-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                <button onclick="closeModal('password-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
             <form onsubmit="handlePasswordSubmit(event)" class="space-y-4">
                 <div>
-                    <label for="admin-password-input" class="block text-sm font-semibold text-slate-700 mb-1.5">סיסמת עריכה</label>
+                    <label for="admin-password-input" class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">סיסמת עריכה</label>
                     <div class="relative">
                         <input type="password" id="admin-password-input" required placeholder="הזן סיסמה..." dir="ltr"
-                            class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition text-left font-mono">
-                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600" title="הצג/הסתר סיסמה">
+                            class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none transition text-left font-mono">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" title="הצג/הסתר סיסמה">
                             <i id="password-eye-icon" class="fa-regular fa-eye"></i>
                         </button>
                     </div>
@@ -423,10 +528,10 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeModal('password-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                    <button type="button" onclick="closeModal('password-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         ביטול
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent-600 hover:bg-accent-700 text-white shadow-xs transition">
                         כניסה
                     </button>
                 </div>
@@ -435,11 +540,11 @@
     </div>
 
     <!-- 3. Add / Edit Event Modal -->
-    <div id="event-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in my-8">
-            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
-                <h3 id="event-modal-title" class="text-xl font-extrabold text-slate-900">הוספת אירוע</h3>
-                <button onclick="closeModal('event-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+    <div id="event-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in my-8">
+            <div class="flex items-center justify-between mb-5 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 id="event-modal-title" class="text-xl font-extrabold text-slate-900 dark:text-white">הוספת אירוע</h3>
+                <button onclick="closeModal('event-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -448,34 +553,34 @@
                 <input type="hidden" id="event-id">
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">כותרת האירוע *</label>
-                    <input type="text" id="event-title" required placeholder="לדוגמה: מבחן אמצע / מפגשים אישיים לפרזנטציות"
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">כותרת האירוע *</label>
+                    <input type="text" id="event-title" required placeholder="לדוגמה: מבחן אמצע / מצגת דוגמא לפרזנטציה"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">תאריך *</label>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">תאריך *</label>
                         <input type="date" id="event-date" required
-                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">שעת התחלה</label>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">שעת התחלה</label>
                         <input type="time" id="event-start-time"
-                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">שעת סיום</label>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">שעת סיום</label>
                         <input type="time" id="event-end-time"
-                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">קטגוריה *</label>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">קטגוריה *</label>
                         <select id="event-category" required
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm bg-white">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                             <option value="exam">מבחנים</option>
                             <option value="presentation">פרזנטציות</option>
                             <option value="assignment">הגשות</option>
@@ -483,28 +588,34 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1">מיקום / כיתה</label>
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">מיקום / כיתה</label>
                         <input type="text" id="event-location" placeholder="לדוגמה: בניין 3, כיתה 104 / מכללת אשקלון"
-                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm">
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">תיאור והנחיות לקבוצה *</label>
-                    <textarea id="event-description" rows="3" required placeholder="פרטים נוספים לסטודנטים בקורס..."
-                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"></textarea>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">תיאור והנחיות לקבוצה (קישורים הופכים אוטומטית ללחיצים) *</label>
+                    <textarea id="event-description" rows="3" required placeholder="פרטים נוספים או קישור ישיר לסטודנטים..."
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm"></textarea>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="event-completed" class="w-4 h-4 text-blue-600 rounded border-slate-300">
-                    <label for="event-completed" class="text-sm font-medium text-slate-700">סמן אירוע כהושלם</label>
+                <div class="flex flex-wrap items-center gap-5">
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="event-pinned" class="w-4 h-4 rounded border-slate-300">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">נעץ בראש רשימת האירועים</span>
+                    </label>
+                    <label class="inline-flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="event-completed" class="w-4 h-4 rounded border-slate-300">
+                        <span class="text-sm font-medium text-slate-700 dark:text-slate-300">סמן כהושלם</span>
+                    </label>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeModal('event-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <button type="button" onclick="closeModal('event-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         ביטול
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent-600 hover:bg-accent-700 text-white shadow-xs transition">
                         שמור אירוע
                     </button>
                 </div>
@@ -513,31 +624,31 @@
     </div>
 
     <!-- 4. Edit Pinned Banner Modal -->
-    <div id="header-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in">
-            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
-                <h3 class="text-xl font-extrabold text-slate-900">עריכת הודעה נעוצה</h3>
-                <button onclick="closeModal('header-edit-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+    <div id="header-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in">
+            <div class="flex items-center justify-between mb-5 border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">עריכת הודעה נעוצה</h3>
+                <button onclick="closeModal('header-edit-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
             <form onsubmit="handleHeaderEditSubmit(event)" class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <label class="text-sm font-semibold text-slate-700">תוכן ההודעה</label>
+                    <label class="text-sm font-semibold text-slate-700 dark:text-slate-300">תוכן ההודעה (קישורים הופכים ללחיצים)</label>
                     <label class="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="edit-pinned-visible" class="w-4 h-4 text-blue-600 rounded border-slate-300">
-                        <span class="text-xs font-medium text-slate-600">הצג באנר הודעה</span>
+                        <input type="checkbox" id="edit-pinned-visible" class="w-4 h-4 rounded border-slate-300">
+                        <span class="text-xs font-medium text-slate-600 dark:text-slate-300">הצג באנר הודעה</span>
                     </label>
                 </div>
                 <textarea id="edit-pinned-text" rows="4"
-                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-sm"></textarea>
+                    class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm"></textarea>
 
                 <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeModal('header-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                    <button type="button" onclick="closeModal('header-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                         ביטול
                     </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
+                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent-600 hover:bg-accent-700 text-white shadow-xs transition">
                         שמור הודעה
                     </button>
                 </div>
@@ -545,130 +656,139 @@
         </div>
     </div>
 
-    <!-- 5. Edit Quick Links Modal -->
-    <div id="links-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in">
-            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
-                <h3 class="text-xl font-extrabold text-slate-900">עריכת קישורים מהירים</h3>
-                <button onclick="closeModal('links-edit-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+    <!-- 5. Dynamic Quick Links Manager Modal (Add / Edit / Delete any link) -->
+    <div id="links-edit-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in my-8 space-y-5">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div>
+                    <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">ניהול קישורים מהירים</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">הוסף, ערוך או מחק כפתורי קישור שמופיעים לכולם בעמוד הראשי</p>
+                </div>
+                <button onclick="closeModal('links-edit-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <form onsubmit="handleLinksEditSubmit(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור למודל (Moodle)</label>
-                    <input type="url" id="link-moodle" required dir="ltr"
-                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
+            <!-- Add New Link Form -->
+            <div class="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-3">
+                <h4 class="text-xs font-extrabold text-slate-700 dark:text-slate-200 uppercase tracking-wide flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-accent-600"></i>
+                    <span>הוספת קישור חדש</span>
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
+                    <div class="sm:col-span-4">
+                        <input type="text" id="new-link-label" placeholder="שם הכפתור (למשל: מצגת דוגמא)"
+                            class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm outline-none">
+                    </div>
+                    <div class="sm:col-span-5">
+                        <input type="url" id="new-link-url" dir="ltr" placeholder="https://..."
+                            class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm text-left outline-none">
+                    </div>
+                    <div class="sm:col-span-3 flex gap-1.5">
+                        <select id="new-link-icon" class="flex-grow px-2 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white text-xs outline-none">
+                            <option value="fa-solid fa-link">קישור</option>
+                            <option value="fa-solid fa-person-chalkboard">מצגת</option>
+                            <option value="fa-solid fa-book-open">ספר / מודל</option>
+                            <option value="fa-brands fa-whatsapp">וואטסאפ</option>
+                            <option value="fa-solid fa-file-pdf">קובץ / מסמך</option>
+                            <option value="fa-solid fa-video">זום / וידאו</option>
+                            <option value="fa-solid fa-user-graduate">פורטל</option>
+                        </select>
+                        <button type="button" onclick="addNewQuickLinkRow()" class="shrink-0 bg-accent-600 hover:bg-accent-700 text-white text-xs font-bold px-3 py-2 rounded-xl transition">
+                            הוסף
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור לפורטל סטודנטים</label>
-                    <input type="url" id="link-portal" required dir="ltr"
-                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
-                </div>
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">קישור לקבוצת הוואטסאפ</label>
-                    <input type="url" id="link-whatsapp" required dir="ltr"
-                        class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:border-blue-500 outline-none text-sm text-left">
-                </div>
+            </div>
 
-                <div class="flex items-center justify-end gap-2 pt-2">
-                    <button type="button" onclick="closeModal('links-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
-                        ביטול
-                    </button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition">
-                        שמור קישורים
-                    </button>
-                </div>
-            </form>
+            <!-- Existing Links List -->
+            <div class="space-y-2.5 max-h-[300px] overflow-y-auto pl-1" id="links-editor-list">
+                <!-- Rendered dynamically -->
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" onclick="closeModal('links-edit-modal')" class="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    ביטול
+                </button>
+                <button type="button" onclick="saveAllQuickLinks()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-accent-600 hover:bg-accent-700 text-white shadow-xs transition">
+                    שמור קישורים בענן
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- 6. WhatsApp Sharing & Hosting Info Modal -->
-    <div id="share-info-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <div id="share-info-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-lg">
                         <i class="fa-brands fa-whatsapp"></i>
                     </div>
-                    <h3 class="text-lg font-extrabold text-slate-900">שיתוף לקבוצת הוואטסאפ ופרסום חי</h3>
+                    <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">שיתוף לקבוצת הוואטסאפ של הקורס</h3>
                 </div>
-                <button onclick="closeModal('share-info-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                <button onclick="closeModal('share-info-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div class="space-y-3 text-sm text-slate-700 leading-relaxed">
+            <div class="space-y-3 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 <p>
                     <strong>איך שולחים לקבוצת הוואטסאפ?</strong><br>
-                    ברגע שהאתר מפורסם בכתובת אינטרנט (למשל דרך GitHub Pages, Netlify או Vercel), כל מה שצריך לעשות הוא לשלוח את הקישור לקבוצת הוואטסאפ של הקורס.
-                </p>
-                <p>
-                    <strong>איך כולם רואים את העדכונים בזמן אמת?</strong><br>
-                    כשאתה נכנס עם סיסמת המנהל ומעדכן אירוע, שעה או הודעה נעוצה, הנתונים נשמרים בענן ומתעדכנים אוטומטית אצל כל מי שנכנס לקישור (ואם אין חיבור ענן פעיל, נשמרת גרסה מקומית בדפדפן).
+                    העתק את הקישור הקבוע שלמטה והדבק אותו בקבוצת הוואטסאפ של הקורס. כל שינוי שתבצע דרך מצב הניהול יתעדכן מיד אצל כולם.
                 </p>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-500 mb-1">כתובת הקישור הנוכחית</label>
+                <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">כתובת האתר הקבועה לשיתוף</label>
                 <div class="flex items-center gap-2">
                     <input type="text" id="current-page-url" readonly dir="ltr"
-                        class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-mono text-slate-700">
-                    <button onclick="copyCurrentUrl()" class="shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
+                        class="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-mono text-slate-700 dark:text-slate-200">
+                    <button onclick="copyCurrentUrl()" class="shrink-0 bg-accent-600 hover:bg-accent-700 text-white text-xs font-bold px-3.5 py-2 rounded-xl transition">
                         העתק
                     </button>
                 </div>
             </div>
 
             <div class="flex justify-end pt-2">
-                <button onclick="closeModal('share-info-modal')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition">
+                <button onclick="closeModal('share-info-modal')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">
                     סגור
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- 6.5 Cloud Sync Setup Modal (Firebase Realtime Database / Firestore) -->
-    <div id="cloud-setup-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in my-8 space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+    <!-- 6.5 Cloud Sync Setup Modal -->
+    <div id="cloud-setup-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in my-8 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-base">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 flex items-center justify-center text-base">
                         <i class="fa-solid fa-cloud-arrow-up"></i>
                     </div>
                     <div>
-                        <h3 class="text-lg font-extrabold text-slate-900">הגדרת סנכרון ענן חי לכולם</h3>
-                        <p class="text-xs text-slate-500">עדכונים אוטומטיים לכל הסטודנטים שנכנסים לקישור הקבוע</p>
+                        <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">הגדרת סנכרון ענן חי לכולם</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">חיבור Firebase כבר מוגדר בקוד ופועל אוטומטית</p>
                     </div>
                 </div>
-                <button onclick="closeModal('cloud-setup-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                <button onclick="closeModal('cloud-setup-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 space-y-1.5 leading-relaxed">
-                <p class="font-bold text-slate-900">איך מחברים ב-2 דקות (חינם לגמרי):</p>
-                <ol class="list-decimal list-inside space-y-1">
-                    <li>היכנס ל-<span dir="ltr" class="font-mono text-blue-700">console.firebase.google.com</span> וצור פרויקט חדש.</li>
-                    <li>הפעל <strong>Firestore Database</strong> (במצב Production עם כללי אבטחה) ו-<strong>Authentication → Anonymous</strong>.</li>
-                    <li>בהגדרות הפרויקט הוסף אפליקציית Web והעתק את אובייקט ה-<span dir="ltr" class="font-mono">firebaseConfig</span> לכאן, או הדבק אותו ישירות בקבוע <span dir="ltr" class="font-mono">DEFAULT_FIREBASE_CONFIG</span> שבקוד כדי שיעבוד לכולם מיד!</li>
-                </ol>
-            </div>
-
             <form onsubmit="handleCloudConfigSubmit(event)" class="space-y-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">הדבק כאן את ה-Firebase Config (JSON או אובייקט JS)</label>
-                    <textarea id="cloud-config-input" rows="5" dir="ltr" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "appId": "..."}'
-                        class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-500 outline-none text-xs font-mono text-left"></textarea>
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Firebase Config (JSON או אובייקט JS)</label>
+                    <textarea id="cloud-config-input" rows="5" dir="ltr"
+                        class="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-xs font-mono text-left"></textarea>
                 </div>
 
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-                    <button type="button" onclick="clearSavedCloudConfig()" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2.5 py-2 rounded-lg hover:bg-rose-50 transition">
+                    <button type="button" onclick="clearSavedCloudConfig()" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2.5 py-2 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
                         נקה הגדרה מקומית
                     </button>
                     <div class="flex items-center gap-2">
-                        <button type="button" onclick="closeModal('cloud-setup-modal')" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                        <button type="button" onclick="closeModal('cloud-setup-modal')" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
                             ביטול
                         </button>
                         <button type="submit" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition">
@@ -681,15 +801,15 @@
     </div>
 
     <!-- 7. Delete Confirmation Modal -->
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 fade-in text-center">
-            <div class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
+    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in text-center">
+            <div class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950 text-rose-600 flex items-center justify-center mx-auto mb-3 text-xl">
                 <i class="fa-solid fa-trash-can"></i>
             </div>
-            <h3 class="text-lg font-extrabold text-slate-900 mb-1">מחיקת אירוע</h3>
-            <p class="text-sm text-slate-500 mb-5">האם למחוק אירוע זה מלוח הקורס?</p>
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-1">מחיקת אירוע</h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mb-5">האם למחוק אירוע זה מלוח הקורס?</p>
             <div class="flex items-center justify-center gap-3">
-                <button onclick="closeModal('delete-confirm-modal')" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                <button onclick="closeModal('delete-confirm-modal')" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                     ביטול
                 </button>
                 <button id="confirm-delete-btn" class="flex-1 px-4 py-2.5 rounded-xl text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-xs transition">
@@ -699,46 +819,51 @@
         </div>
     </div>
 
-    <!-- Application Logic & Firestore / LocalStorage Sync (Hardened Security) -->
+    <!-- Application Logic & Firestore / LocalStorage Sync -->
     <script type="module">
         import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Cryptographic verifier (PBKDF2-HMAC-SHA256, 150,000 iterations) - No plaintext password stored in source!
+        // Cryptographic verifier (PBKDF2-HMAC-SHA256, 150,000 iterations)
         const AUTH_CRYPTO = Object.freeze({
             saltHex: "d7afdc69ddd11d55fa58386988b320e5",
             hashHex: "ef590659f2268f998e39a39d94b84f3879c6ce201d05ec6229513da2473ca63c",
             iterations: 150000
         });
 
-        const STORAGE_KEY = "aac_bella_english_landing_v3";
+        const STORAGE_KEY = "aac_bella_english_landing_v4";
         const CLOUD_CONFIG_STORAGE_KEY = "aac_bella_firebase_cfg_v1";
         const SESSION_AUTH_KEY = "aac_bella_admin_session_v2";
         const LOCKOUT_STORAGE_KEY = "aac_bella_login_guard_v1";
-        const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours auto-logout
-        const MAX_FAILED_ATTEMPTS = 5;
-        const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minutes lockout after 5 failed attempts
+        const UI_PREFS_KEY = "aac_bella_ui_prefs_v1";
+        const WIDGET_POS_KEY = "aac_bella_cal_widget_pos_v1";
 
-        // Optional: Paste your Firebase Web App config object here once so every visitor syncs automatically!
+        const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
+        const MAX_FAILED_ATTEMPTS = 5;
+        const LOCKOUT_DURATION_MS = 5 * 60 * 1000;
+
         const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCKRaaIkBlouZbCFfAh8H3RQzsDByIKMr4",
-  authDomain: "aac-english-course.firebaseapp.com",
-  projectId: "aac-english-course",
-  storageBucket: "aac-english-course.firebasestorage.app",
-  messagingSenderId: "957240810402",
-  appId: "1:957240810402:web:763ba44d5befa4eed770fb",
-  measurementId: "G-2G56STH729"
-};
+            apiKey: "AIzaSyCKRaaIkBlouZbCFfAh8H3RQzsDByIKMr4",
+            authDomain: "aac-english-course.firebaseapp.com",
+            projectId: "aac-english-course",
+            storageBucket: "aac-english-course.firebasestorage.app",
+            messagingSenderId: "957240810402",
+            appId: "1:957240810402:web:763ba44d5befa4eed770fb",
+            measurementId: "G-2G56STH729"
+        };
+
+        const DEFAULT_QUICK_LINKS = [
+            { id: "lnk-moodle", label: "מודל (Moodle)", url: "https://moodle.aac.ac.il", icon: "fa-solid fa-book-open" },
+            { id: "lnk-portal", label: "פורטל סטודנטים", url: "https://portal.aac.ac.il", icon: "fa-solid fa-user-graduate" },
+            { id: "lnk-whatsapp", label: "קבוצת וואטסאפ", url: "https://chat.whatsapp.com", icon: "fa-brands fa-whatsapp" },
+            { id: "lnk-sample", label: "מצגת דוגמא לפרזנטציה", url: "https://noamrevivo.github.io/course-events/sample-presentation.html", icon: "fa-solid fa-person-chalkboard" }
+        ];
 
         const DEFAULT_SETTINGS = {
             pinnedVisible: true,
             pinnedText: "ברוכים הבאים! ביום ראשון 29/11 יתקיים מבחן אמצע החל מהשעה 15:30, וביום שני 30/11 יתקיימו מפגשים אישיים לפרזנטציות בין השעות 09:00–10:30.",
-            links: {
-                moodle: "https://moodle.aac.ac.il",
-                portal: "https://portal.aac.ac.il",
-                whatsapp: "https://chat.whatsapp.com"
-            }
+            quickLinks: structuredClone(DEFAULT_QUICK_LINKS)
         };
 
         const DEFAULT_EVENTS = [
@@ -751,7 +876,8 @@
                 category: "exam",
                 location: "מכללת אשקלון",
                 description: "מבחן אמצע בקורס אנגלית רמת בסיסי עם המרצה בלה בוטראשוילי. נא להגיע בזמן.",
-                completed: false
+                completed: false,
+                pinned: false
             },
             {
                 id: "ev-2026-11-30-presentations",
@@ -761,34 +887,35 @@
                 endTime: "10:30",
                 category: "presentation",
                 location: "מכללת אשקלון",
-                description: "מפגשים אישיים לפרזנטציות מול המרצה בלה בוטראשוילי בין השעות 09:00 ל-10:30.",
-                completed: false
+                description: "מפגשים אישיים לפרזנטציות מול המרצה בלה בוטראשוילי בין השעות 09:00 ל-10:30.\nלמצגת דוגמא: https://noamrevivo.github.io/course-events/sample-presentation.html",
+                completed: false,
+                pinned: false
             }
         ];
 
         const CATEGORIES = {
             exam: {
                 label: "מבחנים",
-                badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+                badgeClass: "bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800",
                 dotClass: "bg-rose-500",
                 icon: "fa-solid fa-file-signature"
             },
             presentation: {
                 label: "פרזנטציות",
-                badgeClass: "bg-purple-50 text-purple-700 border-purple-200",
+                badgeClass: "bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800",
                 dotClass: "bg-purple-500",
                 icon: "fa-solid fa-person-chalkboard"
             },
             assignment: {
                 label: "הגשות",
-                badgeClass: "bg-amber-50 text-amber-800 border-amber-200",
+                badgeClass: "bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800",
                 dotClass: "bg-amber-500",
                 icon: "fa-solid fa-file-pen"
             },
             general: {
                 label: "הודעות",
-                badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
-                dotClass: "bg-blue-500",
+                badgeClass: "bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
+                dotClass: "bg-sky-500",
                 icon: "fa-solid fa-circle-info"
             }
         };
@@ -802,11 +929,14 @@
             isAdmin: false,
             adminProofHash: "",
             activeFilter: "all",
+            searchQuery: "",
+            hideCompleted: false,
             viewYear: 2026,
-            viewMonth: 10, // November 2026
+            viewMonth: 10,
             selectedDate: "2026-11-29",
             settings: structuredClone(DEFAULT_SETTINGS),
             events: structuredClone(DEFAULT_EVENTS),
+            draftLinks: [],
             useCloud: false
         };
 
@@ -816,6 +946,199 @@
         let unsubSettings = null;
         let unsubEvents = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aac-bella-english-course';
+
+        // ==================== UI THEME & DARK MODE ====================
+
+        function initUIPreferences() {
+            try {
+                const raw = localStorage.getItem(UI_PREFS_KEY);
+                const prefs = raw ? JSON.parse(raw) : { theme: "blue", mode: "light" };
+                applyAccentTheme(prefs.theme === "pink" ? "pink" : "blue", false);
+                applyDarkMode(prefs.mode === "dark" ? "dark" : "light", false);
+            } catch {
+                applyAccentTheme("blue", false);
+                applyDarkMode("light", false);
+            }
+        }
+
+        function saveUIPreferences() {
+            const theme = document.documentElement.getAttribute("data-theme") || "blue";
+            const mode = document.documentElement.getAttribute("data-mode") || "light";
+            try {
+                localStorage.setItem(UI_PREFS_KEY, JSON.stringify({ theme, mode }));
+            } catch {}
+        }
+
+        function applyAccentTheme(theme, persist = true) {
+            document.documentElement.setAttribute("data-theme", theme);
+            const blueBtn = document.getElementById("theme-blue-btn");
+            const pinkBtn = document.getElementById("theme-pink-btn");
+            const calHeader = document.getElementById("widget-cal-header");
+            const calHighlight = document.getElementById("widget-cal-highlight");
+
+            if (blueBtn && pinkBtn) {
+                if (theme === "pink") {
+                    pinkBtn.className = "px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-pink-600 text-white shadow-xs";
+                    blueBtn.className = "px-2.5 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900";
+                } else {
+                    blueBtn.className = "px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-blue-600 text-white shadow-xs";
+                    pinkBtn.className = "px-2.5 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900";
+                }
+            }
+
+            if (calHeader && calHighlight) {
+                if (theme === "pink") {
+                    calHeader.setAttribute("fill", "#DB2777");
+                    calHighlight.setAttribute("fill", "#FCE7F3");
+                    calHighlight.setAttribute("stroke", "#DB2777");
+                } else {
+                    calHeader.setAttribute("fill", "#2563EB");
+                    calHighlight.setAttribute("fill", "#DBEAFE");
+                    calHighlight.setAttribute("stroke", "#2563EB");
+                }
+            }
+
+            if (persist) saveUIPreferences();
+        }
+
+        function applyDarkMode(mode, persist = true) {
+            document.documentElement.setAttribute("data-mode", mode);
+            const icon = document.getElementById("dark-mode-icon");
+            const label = document.getElementById("dark-mode-label");
+            if (icon && label) {
+                if (mode === "dark") {
+                    icon.className = "fa-solid fa-sun text-amber-400";
+                    label.textContent = "מצב בהיר";
+                } else {
+                    icon.className = "fa-solid fa-moon text-accent-600";
+                    label.textContent = "מצב כהה";
+                }
+            }
+            if (persist) saveUIPreferences();
+        }
+
+        window.setAccentTheme = function(theme) {
+            applyAccentTheme(theme, true);
+            showToast(theme === "pink" ? "ערכת עיצוב ורודה הופעלה" : "ערכת עיצוב כחולה הופעלה", "info");
+        };
+
+        window.toggleDarkMode = function() {
+            const current = document.documentElement.getAttribute("data-mode") || "light";
+            const next = current === "dark" ? "light" : "dark";
+            applyDarkMode(next, true);
+        };
+
+        // ==================== DRAGGABLE CALENDAR WIDGET ====================
+
+        function initDraggableCalendarWidget() {
+            const widget = document.getElementById("side-calendar-widget");
+            if (!widget) return;
+
+            // Restore saved position if valid within viewport
+            try {
+                const rawPos = localStorage.getItem(WIDGET_POS_KEY);
+                if (rawPos) {
+                    const pos = JSON.parse(rawPos);
+                    if (typeof pos.left === "number" && typeof pos.top === "number") {
+                        const maxLeft = Math.max(8, window.innerWidth - 130);
+                        const maxTop = Math.max(8, window.innerHeight - 90);
+                        widget.style.left = Math.min(Math.max(8, pos.left), maxLeft) + "px";
+                        widget.style.top = Math.min(Math.max(8, pos.top), maxTop) + "px";
+                        widget.style.bottom = "auto";
+                        widget.style.right = "auto";
+                    }
+                }
+            } catch {}
+
+            let isPointerDown = false;
+            let hasDragged = false;
+            let startX = 0;
+            let startY = 0;
+            let origLeft = 0;
+            let origTop = 0;
+
+            widget.addEventListener("pointerdown", (e) => {
+                if (e.button !== 0 && e.pointerType === "mouse") return;
+                isPointerDown = true;
+                hasDragged = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = widget.getBoundingClientRect();
+                origLeft = rect.left;
+                origTop = rect.top;
+                widget.setPointerCapture(e.pointerId);
+            });
+
+            widget.addEventListener("pointermove", (e) => {
+                if (!isPointerDown) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+
+                if (!hasDragged && Math.hypot(dx, dy) > 6) {
+                    hasDragged = true;
+                    widget.classList.add("dragging");
+                    widget.style.bottom = "auto";
+                    widget.style.right = "auto";
+                }
+
+                if (hasDragged) {
+                    const rect = widget.getBoundingClientRect();
+                    const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+                    const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+                    const nextLeft = Math.min(Math.max(8, origLeft + dx), maxLeft);
+                    const nextTop = Math.min(Math.max(8, origTop + dy), maxTop);
+                    widget.style.left = `${nextLeft}px`;
+                    widget.style.top = `${nextTop}px`;
+                }
+            });
+
+            const finishPointer = (e) => {
+                if (!isPointerDown) return;
+                isPointerDown = false;
+                widget.classList.remove("dragging");
+                try { widget.releasePointerCapture(e.pointerId); } catch {}
+
+                if (hasDragged) {
+                    const rect = widget.getBoundingClientRect();
+                    try {
+                        localStorage.setItem(WIDGET_POS_KEY, JSON.stringify({
+                            left: Math.round(rect.left),
+                            top: Math.round(rect.top)
+                        }));
+                    } catch {}
+                } else {
+                    openCalendarModal();
+                }
+            };
+
+            widget.addEventListener("pointerup", finishPointer);
+            widget.addEventListener("pointercancel", finishPointer);
+            widget.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openCalendarModal();
+                }
+            });
+
+            window.addEventListener("resize", () => {
+                const rect = widget.getBoundingClientRect();
+                const maxLeft = Math.max(8, window.innerWidth - rect.width - 8);
+                const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+                if (rect.left > maxLeft) widget.style.left = `${maxLeft}px`;
+                if (rect.top > maxTop) widget.style.top = `${maxTop}px`;
+            });
+        }
+
+        window.resetWidgetPosition = function() {
+            const widget = document.getElementById("side-calendar-widget");
+            if (!widget) return;
+            localStorage.removeItem(WIDGET_POS_KEY);
+            widget.style.left = "16px";
+            widget.style.bottom = "20px";
+            widget.style.top = "auto";
+            widget.style.right = "auto";
+            showToast("מיקום אייקון לוח השנה אופס", "info");
+        };
 
         // ==================== SECURITY & CRYPTO HELPERS ====================
 
@@ -833,7 +1156,6 @@
                 .join('');
         }
 
-        // Constant-time string comparison to prevent timing side-channels
         function constantTimeEqual(a, b) {
             if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) {
                 return false;
@@ -900,6 +1222,29 @@
             return fallback;
         }
 
+        function normalizeQuickLinksFromSettings(data) {
+            if (Array.isArray(data?.quickLinks) && data.quickLinks.length > 0) {
+                return data.quickLinks
+                    .map((item, idx) => ({
+                        id: String(item.id || `lnk-${idx}-${Date.now()}`),
+                        label: String(item.label || "").trim().slice(0, 60),
+                        url: sanitizeSafeUrl(item.url, ""),
+                        icon: String(item.icon || "fa-solid fa-link").replace(/[^a-zA-Z0-9\s-]/g, "")
+                    }))
+                    .filter(item => item.label && item.url);
+            }
+            if (data?.links && typeof data.links === "object") {
+                const migrated = [
+                    { id: "lnk-moodle", label: "מודל (Moodle)", url: sanitizeSafeUrl(data.links.moodle, DEFAULT_QUICK_LINKS[0].url), icon: "fa-solid fa-book-open" },
+                    { id: "lnk-portal", label: "פורטל סטודנטים", url: sanitizeSafeUrl(data.links.portal, DEFAULT_QUICK_LINKS[1].url), icon: "fa-solid fa-user-graduate" },
+                    { id: "lnk-whatsapp", label: "קבוצת וואטסאפ", url: sanitizeSafeUrl(data.links.whatsapp, DEFAULT_QUICK_LINKS[2].url), icon: "fa-brands fa-whatsapp" },
+                    DEFAULT_QUICK_LINKS[3]
+                ];
+                return migrated;
+            }
+            return structuredClone(DEFAULT_QUICK_LINKS);
+        }
+
         function validateEventPayload(raw) {
             const validCategories = Object.keys(CATEGORIES);
             const title = String(raw.title || "").trim().slice(0, 140);
@@ -910,22 +1255,20 @@
             const location = String(raw.location || "").trim().slice(0, 120);
             const description = String(raw.description || "").trim().slice(0, 1500);
             const completed = Boolean(raw.completed);
+            const pinned = Boolean(raw.pinned);
 
-            return { title, date, startTime, endTime, category, location, description, completed };
+            return { title, date, startTime, endTime, category, location, description, completed, pinned };
         }
 
         function resolveFirebaseConfig() {
-            // 1. Runtime injected config (e.g. Canvas / hosting env)
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
                 try {
                     return typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
                 } catch {}
             }
-            // 2. Hardcoded DEFAULT_FIREBASE_CONFIG in source
             if (DEFAULT_FIREBASE_CONFIG && typeof DEFAULT_FIREBASE_CONFIG === 'object' && DEFAULT_FIREBASE_CONFIG.apiKey) {
                 return DEFAULT_FIREBASE_CONFIG;
             }
-            // 3. URL parameter ?fb=... (Base64 encoded JSON config for sharing a single self-contained link!)
             try {
                 const urlParams = new URLSearchParams(window.location.search);
                 const fbParam = urlParams.get('fb');
@@ -937,7 +1280,6 @@
                     }
                 }
             } catch {}
-            // 4. Locally saved config in browser
             try {
                 const saved = localStorage.getItem(CLOUD_CONFIG_STORAGE_KEY);
                 if (saved) {
@@ -972,12 +1314,13 @@
         // ==================== INITIALIZATION & CLOUD SYNC ====================
 
         async function initApp() {
+            initUIPreferences();
+            initDraggableCalendarWidget();
             renderCurrentDate();
             setupFilterListeners();
             updateShareableUrlDisplay();
             restoreAdminSessionIfValid();
 
-            // Periodic session expiration check
             setInterval(() => {
                 if (state.isAdmin) {
                     const raw = sessionStorage.getItem(SESSION_AUTH_KEY);
@@ -1050,11 +1393,7 @@
                     state.settings = {
                         pinnedVisible: Boolean(data.pinnedVisible),
                         pinnedText: String(data.pinnedText || "").slice(0, 1000),
-                        links: {
-                            moodle: sanitizeSafeUrl(data.links?.moodle, DEFAULT_SETTINGS.links.moodle),
-                            portal: sanitizeSafeUrl(data.links?.portal, DEFAULT_SETTINGS.links.portal),
-                            whatsapp: sanitizeSafeUrl(data.links?.whatsapp, DEFAULT_SETTINGS.links.whatsapp)
-                        }
+                        quickLinks: normalizeQuickLinksFromSettings(data)
                     };
                 } else {
                     setDoc(settingsRef, DEFAULT_SETTINGS).catch(console.error);
@@ -1066,8 +1405,8 @@
             const eventsRef = collection(db, 'artifacts', appId, 'public', 'data', 'course_events');
             unsubEvents = onSnapshot(eventsRef, (snap) => {
                 if (snap.empty) {
-                    if (!localStorage.getItem("aac_bella_seeded_v3")) {
-                        localStorage.setItem("aac_bella_seeded_v3", "true");
+                    if (!localStorage.getItem("aac_bella_seeded_v4")) {
+                        localStorage.setItem("aac_bella_seeded_v4", "true");
                         DEFAULT_EVENTS.forEach(ev => {
                             const { id, ...rest } = ev;
                             addDoc(eventsRef, rest).catch(console.error);
@@ -1094,11 +1433,7 @@
                         state.settings = {
                             pinnedVisible: Boolean(parsed.settings.pinnedVisible),
                             pinnedText: String(parsed.settings.pinnedText || "").slice(0, 1000),
-                            links: {
-                                moodle: sanitizeSafeUrl(parsed.settings.links?.moodle, DEFAULT_SETTINGS.links.moodle),
-                                portal: sanitizeSafeUrl(parsed.settings.links?.portal, DEFAULT_SETTINGS.links.portal),
-                                whatsapp: sanitizeSafeUrl(parsed.settings.links?.whatsapp, DEFAULT_SETTINGS.links.whatsapp)
-                            }
+                            quickLinks: normalizeQuickLinksFromSettings(parsed.settings)
                         };
                     }
                     if (Array.isArray(parsed.events)) {
@@ -1127,6 +1462,7 @@
         function renderAll() {
             renderPinnedBanner();
             renderQuickLinks();
+            updateCategoryCounts();
             renderEventsFeed();
             renderCalendar();
             renderSelectedDayDetails();
@@ -1145,8 +1481,10 @@
 
         function updateWidgetBadge() {
             const nextEvent = [...state.events]
+                .filter(e => !e.completed)
                 .sort((a, b) => (a.date || "").localeCompare(b.date || ""))[0];
             const el = document.getElementById('widget-day-number');
+            if (!el) return;
             if (nextEvent && nextEvent.date) {
                 const parts = nextEvent.date.split('-');
                 el.textContent = `${Number(parts[2])}/${Number(parts[1])}`;
@@ -1161,7 +1499,7 @@
             const textEl = document.getElementById('pinned-banner-text');
             if (state.settings.pinnedVisible && state.settings.pinnedText.trim()) {
                 wrapper.classList.remove('hidden');
-                textEl.textContent = state.settings.pinnedText;
+                textEl.innerHTML = formatDescriptionWithLinks(state.settings.pinnedText);
             } else {
                 wrapper.classList.add('hidden');
             }
@@ -1169,22 +1507,54 @@
 
         function renderQuickLinks() {
             const container = document.getElementById('quick-links-container');
-            const links = state.settings.links || DEFAULT_SETTINGS.links;
-            const items = [
-                { label: "מודל (Moodle)", url: sanitizeSafeUrl(links.moodle, DEFAULT_SETTINGS.links.moodle), icon: "fa-solid fa-book-open" },
-                { label: "פורטל סטודנטים", url: sanitizeSafeUrl(links.portal, DEFAULT_SETTINGS.links.portal), icon: "fa-solid fa-user-graduate" },
-                { label: "קבוצת וואטסאפ", url: sanitizeSafeUrl(links.whatsapp, DEFAULT_SETTINGS.links.whatsapp), icon: "fa-brands fa-whatsapp" }
-            ];
+            const items = state.settings.quickLinks || DEFAULT_QUICK_LINKS;
+
+            if (items.length === 0) {
+                container.innerHTML = `<span class="text-xs text-slate-400">אין קישורים מהירים מוגדרים.</span>`;
+                return;
+            }
 
             container.innerHTML = items.map(item => `
                 <a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer"
-                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-700 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3.5 py-1.5 rounded-xl transition">
-                    <i class="${item.icon} text-blue-600"></i>
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-accent-700 bg-slate-50 dark:bg-slate-800 hover:bg-accent-50 border border-slate-200 dark:border-slate-700 hover:border-accent-200 px-3.5 py-1.5 rounded-xl transition">
+                    <i class="${escapeHTML(item.icon)} text-accent-600"></i>
                     <span>${escapeHTML(item.label)}</span>
                     <i class="fa-solid fa-arrow-up-left text-[10px] text-slate-400"></i>
                 </a>
             `).join('');
         }
+
+        function updateCategoryCounts() {
+            const counts = { all: state.events.length, exam: 0, presentation: 0, assignment: 0, general: 0 };
+            state.events.forEach(ev => {
+                if (counts[ev.category] !== undefined) counts[ev.category]++;
+            });
+            Object.entries(counts).forEach(([key, val]) => {
+                const el = document.getElementById(`count-${key}`);
+                if (el) el.textContent = `(${val})`;
+            });
+        }
+
+        window.handleSearchInput = function(val) {
+            state.searchQuery = String(val || "").trim().toLowerCase();
+            const clearBtn = document.getElementById("clear-search-btn");
+            if (clearBtn) clearBtn.classList.toggle("hidden", !state.searchQuery);
+            renderEventsFeed();
+        };
+
+        window.clearSearchInput = function() {
+            const input = document.getElementById("events-search-input");
+            if (input) input.value = "";
+            state.searchQuery = "";
+            const clearBtn = document.getElementById("clear-search-btn");
+            if (clearBtn) clearBtn.classList.add("hidden");
+            renderEventsFeed();
+        };
+
+        window.toggleHideCompleted = function(checked) {
+            state.hideCompleted = Boolean(checked);
+            renderEventsFeed();
+        };
 
         function renderEventsFeed() {
             const container = document.getElementById('events-feed-container');
@@ -1192,7 +1562,14 @@
 
             const filtered = state.events
                 .filter(ev => state.activeFilter === "all" || ev.category === state.activeFilter)
+                .filter(ev => !state.hideCompleted || !ev.completed)
+                .filter(ev => {
+                    if (!state.searchQuery) return true;
+                    const hay = `${ev.title} ${ev.description} ${ev.location} ${ev.date}`.toLowerCase();
+                    return hay.includes(state.searchQuery);
+                })
                 .sort((a, b) => {
+                    if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
                     const dCmp = (a.date || "").localeCompare(b.date || "");
                     if (dCmp !== 0) return dCmp;
                     return (a.startTime || "").localeCompare(b.startTime || "");
@@ -1210,64 +1587,78 @@
                 const timeText = formatTimeRange(ev.startTime, ev.endTime);
                 const dateText = formatFullHebrewDate(ev.date);
                 const isDone = Boolean(ev.completed);
+                const isPinned = Boolean(ev.pinned);
                 const safeId = escapeHTML(ev.id);
                 const safeDate = escapeHTML(ev.date);
 
                 return `
-                    <article class="bg-white rounded-2xl p-5 border border-slate-200/90 hover:border-blue-300 shadow-xs transition flex flex-col justify-between fade-in ${isDone ? 'opacity-70' : ''}">
+                    <article class="bg-white dark:bg-slate-900 rounded-2xl p-5 border ${isPinned ? 'border-accent-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-700' : 'border-slate-200/90 dark:border-slate-800'} hover:border-accent-300 shadow-xs transition flex flex-col justify-between fade-in ${isDone ? 'opacity-70' : ''}">
                         <div>
                             <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                                <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${cat.badgeClass}">
-                                    <i class="${cat.icon}"></i>
-                                    <span>${cat.label}</span>
-                                </span>
-                                ${isDone ? `<span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full">הושלם</span>` : ''}
+                                <div class="flex flex-wrap items-center gap-1.5">
+                                    <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${cat.badgeClass}">
+                                        <i class="${cat.icon}"></i>
+                                        <span>${cat.label}</span>
+                                    </span>
+                                    ${isPinned ? `<span class="inline-flex items-center gap-1 text-[11px] font-bold text-accent-700 bg-accent-50 border border-accent-200 px-2 py-0.5 rounded-full"><i class="fa-solid fa-thumbtack text-[10px]"></i><span>נעוץ</span></span>` : ''}
+                                </div>
+                                ${isDone ? `<span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full">הושלם</span>` : ''}
                             </div>
 
-                            <h3 class="text-lg font-extrabold text-slate-900 mb-1.5 ${isDone ? 'line-through text-slate-500' : ''}">
+                            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-1.5 ${isDone ? 'line-through text-slate-500' : ''}">
                                 ${escapeHTML(ev.title)}
                             </h3>
 
-                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-semibold text-slate-600 mb-2.5">
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2.5">
                                 <span class="inline-flex items-center gap-1.5">
-                                    <i class="fa-regular fa-calendar text-blue-600"></i>
+                                    <i class="fa-regular fa-calendar text-accent-600"></i>
                                     <span>${dateText}</span>
                                 </span>
                                 <span class="inline-flex items-center gap-1.5">
-                                    <i class="fa-regular fa-clock text-blue-600"></i>
+                                    <i class="fa-regular fa-clock text-accent-600"></i>
                                     <span>${timeText}</span>
                                 </span>
                                 ${ev.location ? `
-                                    <span class="inline-flex items-center gap-1.5 text-slate-600">
-                                        <i class="fa-solid fa-location-dot text-blue-600"></i>
+                                    <span class="inline-flex items-center gap-1.5">
+                                        <i class="fa-solid fa-location-dot text-accent-600"></i>
                                         <span>${escapeHTML(ev.location)}</span>
                                     </span>
                                 ` : ''}
                             </div>
 
-                            <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-                                ${escapeHTML(ev.description)}
+                            <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
+                                ${formatDescriptionWithLinks(ev.description)}
                             </p>
                         </div>
 
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                            <button onclick="openCalendarOnDate('${safeDate}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                                <i class="fa-regular fa-calendar-days"></i>
-                                <span>הצג בלוח שנה</span>
-                            </button>
+                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-3">
+                                <button onclick="openCalendarOnDate('${safeDate}')" class="text-xs font-bold text-accent-600 hover:text-accent-800 flex items-center gap-1">
+                                    <i class="fa-regular fa-calendar-days"></i>
+                                    <span>הצג בלוח שנה</span>
+                                </button>
+                                <button onclick="downloadEventICS('${safeId}')" class="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1" title="הוסף ליומן בטלפון / במחשב">
+                                    <i class="fa-solid fa-calendar-plus"></i>
+                                    <span>שמור ליומן</span>
+                                </button>
+                            </div>
 
                             ${state.isAdmin ? `
                                 <div class="flex items-center gap-1.5">
                                     <button onclick="toggleEventCompleted('${safeId}')" title="סמן כהושלם"
-                                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700'} transition">
+                                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700'} transition">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
+                                    <button onclick="duplicateEvent('${safeId}')" title="שכפל אירוע"
+                                        class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 text-xs font-semibold transition">
+                                        <i class="fa-regular fa-copy"></i>
+                                    </button>
                                     <button onclick="openEventModal('${safeId}')" title="ערוך אירוע"
-                                        class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold transition">
+                                        class="px-2.5 py-1.5 rounded-lg bg-accent-50 text-accent-700 hover:bg-accent-100 text-xs font-semibold transition">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
                                     <button onclick="promptDeleteEvent('${safeId}')" title="מחק אירוע"
-                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
+                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </div>
@@ -1277,6 +1668,42 @@
                 `;
             }).join('');
         }
+
+        window.downloadEventICS = function(id) {
+            const ev = state.events.find(item => item.id === id);
+            if (!ev || !ev.date) return;
+            const cleanDate = ev.date.replace(/-/g, "");
+            const start = ev.startTime ? `${cleanDate}T${ev.startTime.replace(":", "")}00` : `${cleanDate}T090000`;
+            const end = ev.endTime ? `${cleanDate}T${ev.endTime.replace(":", "")}00` : (ev.startTime ? `${cleanDate}T${ev.startTime.replace(":", "")}00` : `${cleanDate}T100000`);
+            const escapeICS = (s) => String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+
+            const ics = [
+                "BEGIN:VCALENDAR",
+                "VERSION:2.0",
+                "PRODID:-//AAC English Course//HE",
+                "BEGIN:VEVENT",
+                `UID:${ev.id}@aac-english-course`,
+                `DTSTAMP:${cleanDate}T080000Z`,
+                `DTSTART:${start}`,
+                `DTEND:${end}`,
+                `SUMMARY:${escapeICS(ev.title)}`,
+                `LOCATION:${escapeICS(ev.location || "מכללת אשקלון")}`,
+                `DESCRIPTION:${escapeICS(ev.description)}`,
+                "END:VEVENT",
+                "END:VCALENDAR"
+            ].join("\r\n");
+
+            const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${ev.date}-${ev.title.slice(0, 24)}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            showToast("קובץ יומן ירד למכשיר", "success");
+        };
 
         // ==================== CALENDAR MODAL LOGIC ====================
 
@@ -1344,7 +1771,7 @@
 
             let html = "";
             for (let i = 0; i < firstDay; i++) {
-                html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 p-1.5"></div>`;
+                html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 dark:bg-slate-950/60 p-1.5"></div>`;
             }
 
             for (let day = 1; day <= daysInMonth; day++) {
@@ -1355,7 +1782,7 @@
 
                 const dotsHTML = dayEvents.slice(0, 3).map(ev => {
                     const cat = CATEGORIES[ev.category] || CATEGORIES.general;
-                    return `<div class="text-[10px] font-bold truncate px-1.5 py-0.5 rounded bg-slate-100 text-slate-800 flex items-center gap-1">
+                    return `<div class="text-[10px] font-bold truncate px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full shrink-0 ${cat.dotClass}"></span>
                         <span class="truncate">${escapeHTML(ev.title)}</span>
                     </div>`;
@@ -1364,16 +1791,16 @@
                 html += `
                     <div onclick="selectCalendarDate('${isoDate}')"
                         class="min-h-[76px] sm:min-h-[88px] p-1.5 cursor-pointer flex flex-col justify-between transition ${
-                            isSelected ? 'bg-blue-50/90 ring-2 ring-inset ring-blue-600' : 'bg-white hover:bg-slate-50'
+                            isSelected ? 'bg-accent-50 ring-accent' : 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/70'
                         }">
                         <div class="flex items-center justify-between">
                             <span class="w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center ${
-                                isToday ? 'bg-slate-900 text-white' : isSelected ? 'bg-blue-600 text-white' : 'text-slate-700'
+                                isToday ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900' : isSelected ? 'bg-accent-600 text-white' : 'text-slate-700 dark:text-slate-300'
                             }">${day}</span>
 
                             ${state.isAdmin ? `
                                 <button type="button" onclick="event.stopPropagation(); openEventModal(null, '${isoDate}')"
-                                    class="w-5 h-5 rounded-md bg-blue-100 hover:bg-blue-600 text-blue-700 hover:text-white flex items-center justify-center text-[10px] transition"
+                                    class="w-5 h-5 rounded-md bg-accent-100 hover:bg-accent-600 text-accent-700 hover:text-white flex items-center justify-center text-[10px] transition"
                                     title="הוסף אירוע לתאריך זה">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
@@ -1390,7 +1817,7 @@
             const rem = total % 7;
             if (rem !== 0) {
                 for (let i = 0; i < 7 - rem; i++) {
-                    html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 p-1.5"></div>`;
+                    html += `<div class="min-h-[76px] sm:min-h-[88px] bg-slate-50/70 dark:bg-slate-950/60 p-1.5"></div>`;
                 }
             }
 
@@ -1415,7 +1842,7 @@
 
             if (dayEvents.length === 0) {
                 container.innerHTML = `
-                    <div class="bg-white rounded-xl p-4 border border-slate-200 text-xs sm:text-sm text-slate-500 text-center">
+                    <div class="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center">
                         אין אירועים מתוכננים לתאריך זה.
                     </div>
                 `;
@@ -1427,30 +1854,30 @@
                 const isDone = Boolean(ev.completed);
                 const safeId = escapeHTML(ev.id);
                 return `
-                    <div class="bg-white rounded-xl p-3.5 border border-slate-200 space-y-2 ${isDone ? 'opacity-70' : ''}">
+                    <div class="bg-white dark:bg-slate-900 rounded-xl p-3.5 border border-slate-200 dark:border-slate-800 space-y-2 ${isDone ? 'opacity-70' : ''}">
                         <div class="flex items-center justify-between gap-2">
                             <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${cat.badgeClass}">
                                 <i class="${cat.icon}"></i>
                                 <span>${cat.label}</span>
                             </span>
-                            <span class="text-xs font-bold text-slate-600">
+                            <span class="text-xs font-bold text-slate-600 dark:text-slate-300">
                                 ${formatTimeRange(ev.startTime, ev.endTime)}
                             </span>
                         </div>
-                        <div class="font-bold text-slate-900 text-sm ${isDone ? 'line-through' : ''}">
+                        <div class="font-bold text-slate-900 dark:text-white text-sm ${isDone ? 'line-through' : ''}">
                             ${escapeHTML(ev.title)}
                         </div>
-                        ${ev.location ? `<div class="text-xs text-blue-700 font-medium"><i class="fa-solid fa-location-dot ml-1"></i>${escapeHTML(ev.location)}</div>` : ''}
-                        <p class="text-xs text-slate-600 leading-relaxed">${escapeHTML(ev.description)}</p>
+                        ${ev.location ? `<div class="text-xs text-accent-700 font-medium"><i class="fa-solid fa-location-dot ml-1"></i>${escapeHTML(ev.location)}</div>` : ''}
+                        <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${formatDescriptionWithLinks(ev.description)}</p>
                         ${state.isAdmin ? `
-                            <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
-                                <button onclick="toggleEventCompleted('${safeId}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-semibold">
+                            <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
+                                <button onclick="toggleEventCompleted('${safeId}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 text-slate-700 dark:text-slate-300 hover:text-emerald-700 text-xs font-semibold">
                                     ${isDone ? 'בטל השלמה' : 'סמן כהושלם'}
                                 </button>
-                                <button onclick="openEventModal('${safeId}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold">
+                                <button onclick="openEventModal('${safeId}')" class="px-2 py-1 rounded-lg bg-accent-50 hover:bg-accent-100 text-accent-700 text-xs font-semibold">
                                     ערוך
                                 </button>
-                                <button onclick="promptDeleteEvent('${safeId}')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold">
+                                <button onclick="promptDeleteEvent('${safeId}')" class="px-2 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 text-rose-600 text-xs font-semibold">
                                     מחק
                                 </button>
                             </div>
@@ -1467,11 +1894,11 @@
             buttons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     buttons.forEach(b => {
-                        b.classList.remove('bg-blue-600', 'text-white', 'font-bold');
-                        b.classList.add('bg-slate-100', 'text-slate-700', 'font-semibold');
+                        b.classList.remove('bg-accent-600', 'text-white', 'font-bold');
+                        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'font-semibold');
                     });
-                    btn.classList.remove('bg-slate-100', 'text-slate-700', 'font-semibold');
-                    btn.classList.add('bg-blue-600', 'text-white', 'font-bold');
+                    btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-700', 'dark:text-slate-300', 'font-semibold');
+                    btn.classList.add('bg-accent-600', 'text-white', 'font-bold');
                     state.activeFilter = btn.getAttribute('data-filter');
                     renderEventsFeed();
                 });
@@ -1515,7 +1942,6 @@
             const errTextEl = document.getElementById('password-error-text');
             const inputEl = document.getElementById('admin-password-input');
 
-            // Brute-force lockout check
             const guard = getLoginGuardState();
             const now = Date.now();
             if (guard.lockedUntil > now) {
@@ -1562,7 +1988,7 @@
             document.getElementById('footer-admin-btn').classList.add('hidden');
             document.querySelectorAll('.admin-only-control').forEach(el => {
                 el.classList.remove('hidden');
-                if (el.tagName === 'BUTTON') el.classList.add('inline-flex');
+                if (el.tagName === 'BUTTON' || el.tagName === 'DIV') el.classList.add('inline-flex');
             });
             renderAll();
             if (notify) showToast("מצב עריכה מאובטח הופעל", "success");
@@ -1583,6 +2009,124 @@
             showToast("התנתקת ממצב עריכה", "info");
         };
 
+        // ==================== DYNAMIC QUICK LINKS MANAGER ====================
+
+        window.openLinksEditModal = function(focusNew = false) {
+            if (!assertAdminAuthorized()) return;
+            state.draftLinks = structuredClone(state.settings.quickLinks || DEFAULT_QUICK_LINKS);
+            document.getElementById('new-link-label').value = '';
+            document.getElementById('new-link-url').value = '';
+            renderLinksEditorList();
+            openModal('links-edit-modal');
+            if (focusNew) {
+                setTimeout(() => document.getElementById('new-link-label').focus(), 80);
+            }
+        };
+
+        function renderLinksEditorList() {
+            const container = document.getElementById('links-editor-list');
+            if (!container) return;
+
+            if (state.draftLinks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">אין קישורים ברשימה. הוסף קישור חדש למעלה.</p>`;
+                return;
+            }
+
+            container.innerHTML = state.draftLinks.map((item, index) => `
+                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <input type="text" value="${escapeHTML(item.label)}" onchange="updateDraftLink(${index}, 'label', this.value)"
+                        class="sm:w-1/3 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs sm:text-sm font-semibold outline-none">
+                    <input type="url" dir="ltr" value="${escapeHTML(item.url)}" onchange="updateDraftLink(${index}, 'url', this.value)"
+                        class="sm:flex-grow px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-xs font-mono text-left outline-none">
+                    <div class="flex items-center justify-end gap-1">
+                        <button type="button" onclick="moveDraftLink(${index}, -1)" ${index === 0 ? 'disabled' : ''} title="הזז למעלה"
+                            class="px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-30 text-xs">
+                            <i class="fa-solid fa-arrow-up"></i>
+                        </button>
+                        <button type="button" onclick="moveDraftLink(${index}, 1)" ${index === state.draftLinks.length - 1 ? 'disabled' : ''} title="הזז למטה"
+                            class="px-2 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-30 text-xs">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                        <button type="button" onclick="removeDraftLink(${index})" title="מחק קישור"
+                            class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 hover:bg-rose-100 text-xs font-bold">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.addNewQuickLinkRow = function() {
+            const label = document.getElementById('new-link-label').value.trim().slice(0, 60);
+            const rawUrl = document.getElementById('new-link-url').value.trim();
+            const icon = document.getElementById('new-link-icon').value || "fa-solid fa-link";
+
+            if (!label || !rawUrl) {
+                showToast("נא למלא שם כפתור וכתובת קישור", "error");
+                return;
+            }
+            const safeUrl = sanitizeSafeUrl(rawUrl, "");
+            if (!safeUrl) {
+                showToast("כתובת הקישור חייבת להתחיל ב-https:// או http://", "error");
+                return;
+            }
+
+            state.draftLinks.push({
+                id: "lnk-" + Date.now(),
+                label,
+                url: safeUrl,
+                icon
+            });
+
+            document.getElementById('new-link-label').value = '';
+            document.getElementById('new-link-url').value = '';
+            renderLinksEditorList();
+            showToast("הקישור נוסף לרשימה — לחץ שמור קישורים בענן", "info");
+        };
+
+        window.updateDraftLink = function(index, field, value) {
+            if (!state.draftLinks[index]) return;
+            if (field === 'label') {
+                state.draftLinks[index].label = String(value || "").trim().slice(0, 60);
+            } else if (field === 'url') {
+                const safe = sanitizeSafeUrl(value, "");
+                if (safe) state.draftLinks[index].url = safe;
+            }
+        };
+
+        window.moveDraftLink = function(index, delta) {
+            const target = index + delta;
+            if (target < 0 || target >= state.draftLinks.length) return;
+            const [moved] = state.draftLinks.splice(index, 1);
+            state.draftLinks.splice(target, 0, moved);
+            renderLinksEditorList();
+        };
+
+        window.removeDraftLink = function(index) {
+            state.draftLinks.splice(index, 1);
+            renderLinksEditorList();
+        };
+
+        window.saveAllQuickLinks = async function() {
+            if (!assertAdminAuthorized()) return;
+            state.settings.quickLinks = state.draftLinks.filter(item => item.label && item.url);
+            closeModal('links-edit-modal');
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
+                    showToast("הקישורים המהירים עודכנו בענן לכולם", "success");
+                } catch (err) {
+                    console.error(err);
+                    showToast("שגיאה בשמירה לענן", "error");
+                }
+            } else {
+                saveToLocalStorage();
+                renderQuickLinks();
+                showToast("הקישורים המהירים עודכנו", "success");
+            }
+        };
+
         // ==================== CLOUD CONFIG & SHARE URL ====================
 
         window.openCloudSetupModal = function() {
@@ -1601,7 +2145,6 @@
             if (!raw) return;
 
             try {
-                // Support both pure JSON and JS object literal pasted from Firebase Console
                 const normalized = raw
                     .replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1')
                     .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
@@ -1618,13 +2161,13 @@
                 const ok = await connectToCloud();
                 if (ok) {
                     updateShareableUrlDisplay();
-                    showToast("חובר לענן בהצלחה! הקישור לשיתוף מוכן", "success");
+                    showToast("חובר לענן בהצלחה!", "success");
                 } else {
                     showToast("לא הצלחנו להתחבר — בדוק את ההגדרות ב-Firebase", "error");
                 }
             } catch (err) {
                 console.error(err);
-                showToast("פורמט ההגדרה לא תקין — העתק את אובייקט ה-firebaseConfig", "error");
+                showToast("פורמט ההגדרה לא תקין", "error");
             }
         };
 
@@ -1636,15 +2179,7 @@
         };
 
         function buildShareableUrl() {
-            const baseUrl = window.location.origin + window.location.pathname;
-            const cfg = resolveFirebaseConfig();
-            if (cfg && cfg.apiKey && cfg.projectId) {
-                try {
-                    const encoded = btoa(JSON.stringify(cfg));
-                    return `${baseUrl}?fb=${encodeURIComponent(encoded)}`;
-                } catch {}
-            }
-            return window.location.href;
+            return window.location.origin + window.location.pathname;
         }
 
         function updateShareableUrlDisplay() {
@@ -1677,11 +2212,13 @@
                 document.getElementById('event-location').value = ev.location || "";
                 document.getElementById('event-description').value = ev.description || "";
                 document.getElementById('event-completed').checked = Boolean(ev.completed);
+                document.getElementById('event-pinned').checked = Boolean(ev.pinned);
             } else {
                 titleEl.textContent = "הוספת אירוע חדש";
                 document.getElementById('event-id').value = "";
                 document.getElementById('event-date').value = prefillDate || state.selectedDate || getTodayISO();
                 document.getElementById('event-completed').checked = false;
+                document.getElementById('event-pinned').checked = false;
             }
 
             openModal('event-modal');
@@ -1700,7 +2237,8 @@
                 category: document.getElementById('event-category').value,
                 location: document.getElementById('event-location').value,
                 description: document.getElementById('event-description').value,
-                completed: document.getElementById('event-completed').checked
+                completed: document.getElementById('event-completed').checked,
+                pinned: document.getElementById('event-pinned').checked
             });
 
             if (!payload.title) return;
@@ -1734,10 +2272,36 @@
                     showToast("האירוע עודכן מקומית", "success");
                 } else {
                     state.events.push({ id: "ev-" + Date.now(), ...payload });
-                    showToast("האירוע נוסף מקומית (חבר ענן לסנכרון לכולם)", "info");
+                    showToast("האירוע נוסף מקומית", "info");
                 }
                 saveToLocalStorage();
                 renderAll();
+            }
+        };
+
+        window.duplicateEvent = async function(id) {
+            if (!assertAdminAuthorized()) return;
+            const ev = state.events.find(item => item.id === id);
+            if (!ev) return;
+            const { id: _ignored, ...rest } = ev;
+            const copyPayload = {
+                ...rest,
+                title: `${ev.title} (עותק)`,
+                completed: false
+            };
+
+            if (state.useCloud && db && currentUser) {
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'course_events'), copyPayload);
+                    showToast("האירוע שוכפל בענן", "success");
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                state.events.push({ id: "ev-" + Date.now(), ...copyPayload });
+                saveToLocalStorage();
+                renderAll();
+                showToast("האירוע שוכפל", "success");
             }
         };
 
@@ -1816,39 +2380,6 @@
             }
         };
 
-        window.openLinksEditModal = function() {
-            if (!assertAdminAuthorized()) return;
-            const links = state.settings.links || DEFAULT_SETTINGS.links;
-            document.getElementById('link-moodle').value = links.moodle || "";
-            document.getElementById('link-portal').value = links.portal || "";
-            document.getElementById('link-whatsapp').value = links.whatsapp || "";
-            openModal('links-edit-modal');
-        };
-
-        window.handleLinksEditSubmit = async function(e) {
-            e.preventDefault();
-            if (!assertAdminAuthorized()) return;
-            state.settings.links = {
-                moodle: sanitizeSafeUrl(document.getElementById('link-moodle').value, DEFAULT_SETTINGS.links.moodle),
-                portal: sanitizeSafeUrl(document.getElementById('link-portal').value, DEFAULT_SETTINGS.links.portal),
-                whatsapp: sanitizeSafeUrl(document.getElementById('link-whatsapp').value, DEFAULT_SETTINGS.links.whatsapp)
-            };
-            closeModal('links-edit-modal');
-
-            if (state.useCloud && db && currentUser) {
-                try {
-                    await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
-                    showToast("הקישורים המהירים עודכנו בענן", "success");
-                } catch (err) {
-                    console.error(err);
-                }
-            } else {
-                saveToLocalStorage();
-                renderQuickLinks();
-                showToast("הקישורים המהירים עודכנו", "success");
-            }
-        };
-
         window.openShareInfoModal = function() {
             updateShareableUrlDisplay();
             openModal('share-info-modal');
@@ -1919,11 +2450,21 @@
         function escapeHTML(str) {
             if (!str) return "";
             return String(str)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/"/g, """)
+                .replace(/'/g, "'");
+        }
+
+        function formatDescriptionWithLinks(str) {
+            if (!str) return "";
+            const escaped = escapeHTML(str);
+            return escaped.replace(/(https?:\/\/[^\s<]+)/g, (url) => {
+                const safeUrl = sanitizeSafeUrl(url, "");
+                if (!safeUrl) return url;
+                return `<a href="${escapeHTML(safeUrl)}" target="_blank" rel="noopener noreferrer" class="text-accent-600 hover:text-accent-800 underline font-semibold break-all">${url}</a>`;
+            });
         }
 
         function showToast(msg, type = "info") {
