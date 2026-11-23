@@ -67,7 +67,7 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased selection:bg-sky-100 selection:text-sky-900">
 
-    <!-- Admin Top Control Bar (Hidden until password Qwer1234 is entered) -->
+    <!-- Admin Top Control Bar (Hidden until admin authentication succeeds) -->
     <div id="admin-toolbar" class="hidden sticky top-0 z-40 bg-slate-900 text-white shadow-xl border-b border-sky-500/40">
         <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-2.5">
@@ -92,6 +92,10 @@
                 <button onclick="openLinksEditModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
                     <i class="fa-solid fa-link"></i>
                     <span>עריכת קישורים</span>
+                </button>
+                <button onclick="openCloudSetupModal()" class="bg-emerald-900/80 hover:bg-emerald-800 text-emerald-100 text-xs sm:text-sm font-medium px-3 py-2 rounded-lg border border-emerald-700/70 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-cloud"></i>
+                    <span>חיבור לענן</span>
                 </button>
                 <button onclick="logoutAdmin()" class="bg-rose-600/90 hover:bg-rose-600 text-white text-xs sm:text-sm font-medium px-3 py-2 rounded-lg transition flex items-center gap-1.5">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -414,7 +418,7 @@
                     </div>
                     <p id="password-error-msg" class="hidden text-rose-600 text-xs font-semibold mt-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-circle-exclamation"></i>
-                        <span>סיסמה שגויה. נסה שוב.</span>
+                        <span id="password-error-text">סיסמה שגויה. נסה שוב.</span>
                     </p>
                 </div>
 
@@ -625,6 +629,57 @@
         </div>
     </div>
 
+    <!-- 6.5 Cloud Sync Setup Modal (Firebase Realtime Database / Firestore) -->
+    <div id="cloud-setup-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-200 fade-in my-8 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-base">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-extrabold text-slate-900">הגדרת סנכרון ענן חי לכולם</h3>
+                        <p class="text-xs text-slate-500">עדכונים אוטומטיים לכל הסטודנטים שנכנסים לקישור הקבוע</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('cloud-setup-modal')" class="text-slate-400 hover:text-slate-600 p-2 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 space-y-1.5 leading-relaxed">
+                <p class="font-bold text-slate-900">איך מחברים ב-2 דקות (חינם לגמרי):</p>
+                <ol class="list-decimal list-inside space-y-1">
+                    <li>היכנס ל-<span dir="ltr" class="font-mono text-blue-700">console.firebase.google.com</span> וצור פרויקט חדש.</li>
+                    <li>הפעל <strong>Firestore Database</strong> (במצב Production עם כללי אבטחה) ו-<strong>Authentication &rarr; Anonymous</strong>.</li>
+                    <li>בהגדרות הפרויקט הוסף אפליקציית Web והעתק את אובייקט ה-<span dir="ltr" class="font-mono">firebaseConfig</span> לכאן, או הדבק אותו ישירות בקבוע <span dir="ltr" class="font-mono">DEFAULT_FIREBASE_CONFIG</span> שבקוד כדי שיעבוד לכולם מיד!</li>
+                </ol>
+            </div>
+
+            <form onsubmit="handleCloudConfigSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">הדבק כאן את ה-Firebase Config (JSON או אובייקט JS)</label>
+                    <textarea id="cloud-config-input" rows="5" dir="ltr" placeholder='{"apiKey": "...", "authDomain": "...", "projectId": "...", "appId": "..."}'
+                        class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:border-emerald-500 outline-none text-xs font-mono text-left"></textarea>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="clearSavedCloudConfig()" class="text-xs font-semibold text-rose-600 hover:text-rose-700 px-2.5 py-2 rounded-lg hover:bg-rose-50 transition">
+                        נקה הגדרה מקומית
+                    </button>
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="closeModal('cloud-setup-modal')" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-100 transition">
+                            ביטול
+                        </button>
+                        <button type="submit" class="px-4 py-2 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition">
+                            שמור והתחבר לענן
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- 7. Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/55 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 fade-in text-center">
@@ -644,14 +699,29 @@
         </div>
     </div>
 
-    <!-- Application Logic & Firestore / LocalStorage Sync -->
+    <!-- Application Logic & Firestore / LocalStorage Sync (Hardened Security) -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        const ADMIN_PASS = "Qwer1234";
+        // Cryptographic verifier (PBKDF2-HMAC-SHA256, 150,000 iterations) - No plaintext password stored in source!
+        const AUTH_CRYPTO = Object.freeze({
+            saltHex: "d7afdc69ddd11d55fa58386988b320e5",
+            hashHex: "ef590659f2268f998e39a39d94b84f3879c6ce201d05ec6229513da2473ca63c",
+            iterations: 150000
+        });
+
         const STORAGE_KEY = "aac_bella_english_landing_v3";
+        const CLOUD_CONFIG_STORAGE_KEY = "aac_bella_firebase_cfg_v1";
+        const SESSION_AUTH_KEY = "aac_bella_admin_session_v2";
+        const LOCKOUT_STORAGE_KEY = "aac_bella_login_guard_v1";
+        const SESSION_TTL_MS = 2 * 60 * 60 * 1000; // 2 hours auto-logout
+        const MAX_FAILED_ATTEMPTS = 5;
+        const LOCKOUT_DURATION_MS = 5 * 60 * 1000; // 5 minutes lockout after 5 failed attempts
+
+        // Optional: Paste your Firebase Web App config object here once so every visitor syncs automatically!
+        const DEFAULT_FIREBASE_CONFIG = null;
 
         const DEFAULT_SETTINGS = {
             pinnedVisible: true,
@@ -722,6 +792,7 @@
 
         let state = {
             isAdmin: false,
+            adminProofHash: "",
             activeFilter: "all",
             viewYear: 2026,
             viewMonth: 10, // November 2026
@@ -734,57 +805,248 @@
         let db = null;
         let auth = null;
         let currentUser = null;
+        let unsubSettings = null;
+        let unsubEvents = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'aac-bella-english-course';
+
+        // ==================== SECURITY & CRYPTO HELPERS ====================
+
+        function hexToBytes(hex) {
+            const bytes = new Uint8Array(hex.length / 2);
+            for (let i = 0; i < hex.length; i += 2) {
+                bytes[i / 2] = parseInt(hex.substring(i, i + 2), 16);
+            }
+            return bytes;
+        }
+
+        function bytesToHex(buffer) {
+            return Array.from(new Uint8Array(buffer))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+        }
+
+        // Constant-time string comparison to prevent timing side-channels
+        function constantTimeEqual(a, b) {
+            if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) {
+                return false;
+            }
+            let diff = 0;
+            for (let i = 0; i < a.length; i++) {
+                diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+            }
+            return diff === 0;
+        }
+
+        async function derivePasswordHash(password) {
+            const enc = new TextEncoder();
+            const keyMaterial = await window.crypto.subtle.importKey(
+                "raw",
+                enc.encode(password),
+                { name: "PBKDF2" },
+                false,
+                ["deriveBits"]
+            );
+            const derivedBits = await window.crypto.subtle.deriveBits(
+                {
+                    name: "PBKDF2",
+                    salt: hexToBytes(AUTH_CRYPTO.saltHex),
+                    iterations: AUTH_CRYPTO.iterations,
+                    hash: "SHA-256"
+                },
+                keyMaterial,
+                256
+            );
+            return bytesToHex(derivedBits);
+        }
+
+        function getLoginGuardState() {
+            try {
+                const raw = localStorage.getItem(LOCKOUT_STORAGE_KEY);
+                if (!raw) return { failures: 0, lockedUntil: 0 };
+                const parsed = JSON.parse(raw);
+                return {
+                    failures: Number(parsed.failures) || 0,
+                    lockedUntil: Number(parsed.lockedUntil) || 0
+                };
+            } catch {
+                return { failures: 0, lockedUntil: 0 };
+            }
+        }
+
+        function setLoginGuardState(failures, lockedUntil) {
+            try {
+                localStorage.setItem(LOCKOUT_STORAGE_KEY, JSON.stringify({ failures, lockedUntil }));
+            } catch {}
+        }
+
+        function sanitizeSafeUrl(rawUrl, fallback = "#") {
+            if (!rawUrl || typeof rawUrl !== "string") return fallback;
+            const trimmed = rawUrl.trim();
+            if (!trimmed) return fallback;
+            try {
+                const parsed = new URL(trimmed, window.location.origin);
+                if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+                    return parsed.href;
+                }
+            } catch {}
+            return fallback;
+        }
+
+        function validateEventPayload(raw) {
+            const validCategories = Object.keys(CATEGORIES);
+            const title = String(raw.title || "").trim().slice(0, 140);
+            const date = /^\d{4}-\d{2}-\d{2}$/.test(raw.date || "") ? raw.date : getTodayISO();
+            const startTime = /^\d{2}:\d{2}$/.test(raw.startTime || "") ? raw.startTime : "";
+            const endTime = /^\d{2}:\d{2}$/.test(raw.endTime || "") ? raw.endTime : "";
+            const category = validCategories.includes(raw.category) ? raw.category : "general";
+            const location = String(raw.location || "").trim().slice(0, 120);
+            const description = String(raw.description || "").trim().slice(0, 1500);
+            const completed = Boolean(raw.completed);
+
+            return { title, date, startTime, endTime, category, location, description, completed };
+        }
+
+        function resolveFirebaseConfig() {
+            // 1. Runtime injected config (e.g. Canvas / hosting env)
+            if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                try {
+                    return typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
+                } catch {}
+            }
+            // 2. Hardcoded DEFAULT_FIREBASE_CONFIG in source
+            if (DEFAULT_FIREBASE_CONFIG && typeof DEFAULT_FIREBASE_CONFIG === 'object' && DEFAULT_FIREBASE_CONFIG.apiKey) {
+                return DEFAULT_FIREBASE_CONFIG;
+            }
+            // 3. URL parameter ?fb=... (Base64 encoded JSON config for sharing a single self-contained link!)
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const fbParam = urlParams.get('fb');
+                if (fbParam) {
+                    const decoded = JSON.parse(atob(fbParam));
+                    if (decoded && decoded.apiKey && decoded.projectId) {
+                        localStorage.setItem(CLOUD_CONFIG_STORAGE_KEY, JSON.stringify(decoded));
+                        return decoded;
+                    }
+                }
+            } catch {}
+            // 4. Locally saved config in browser
+            try {
+                const saved = localStorage.getItem(CLOUD_CONFIG_STORAGE_KEY);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && parsed.apiKey && parsed.projectId) return parsed;
+                }
+            } catch {}
+            return null;
+        }
+
+        function restoreAdminSessionIfValid() {
+            try {
+                const raw = sessionStorage.getItem(SESSION_AUTH_KEY);
+                if (!raw) return;
+                const parsed = JSON.parse(raw);
+                if (
+                    parsed &&
+                    typeof parsed.proof === "string" &&
+                    constantTimeEqual(parsed.proof, AUTH_CRYPTO.hashHex) &&
+                    Number(parsed.expiresAt) > Date.now()
+                ) {
+                    state.adminProofHash = parsed.proof;
+                    enableAdminMode(false);
+                } else {
+                    sessionStorage.removeItem(SESSION_AUTH_KEY);
+                }
+            } catch {
+                sessionStorage.removeItem(SESSION_AUTH_KEY);
+            }
+        }
+
+        // ==================== INITIALIZATION & CLOUD SYNC ====================
 
         async function initApp() {
             renderCurrentDate();
             setupFilterListeners();
-            document.getElementById('current-page-url').value = window.location.href;
+            updateShareableUrlDisplay();
+            restoreAdminSessionIfValid();
 
-            if (sessionStorage.getItem("aac_bella_admin_auth") === "true") {
-                enableAdminMode(false);
-            }
-
-            try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    const firebaseConfig = JSON.parse(__firebase_config);
-                    const app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-
-                    const cred = (typeof __initial_auth_token !== 'undefined' && __initial_auth_token)
-                        ? await signInWithCustomToken(auth, __initial_auth_token)
-                        : await signInAnonymously(auth);
-
-                    currentUser = cred.user;
-                    if (currentUser) {
-                        state.useCloud = true;
-                        updateSyncBadge("מחובר לענן", "emerald");
-                        subscribeToFirestore();
+            // Periodic session expiration check
+            setInterval(() => {
+                if (state.isAdmin) {
+                    const raw = sessionStorage.getItem(SESSION_AUTH_KEY);
+                    if (!raw) {
+                        logoutAdmin();
                         return;
                     }
+                    try {
+                        const parsed = JSON.parse(raw);
+                        if (!parsed || Number(parsed.expiresAt) <= Date.now()) {
+                            logoutAdmin();
+                            showToast("פג תוקף חיבור המנהל מטעמי אבטחה", "info");
+                        }
+                    } catch {
+                        logoutAdmin();
+                    }
+                }
+            }, 30000);
+
+            const connected = await connectToCloud();
+            if (!connected) {
+                state.useCloud = false;
+                updateSyncBadge("שמירה מקומית (לא מחובר לענן)", "amber");
+                loadFromLocalStorage();
+                renderAll();
+            }
+        }
+
+        async function connectToCloud() {
+            const firebaseConfig = resolveFirebaseConfig();
+            if (!firebaseConfig) return false;
+
+            try {
+                if (unsubSettings) { unsubSettings(); unsubSettings = null; }
+                if (unsubEvents) { unsubEvents(); unsubEvents = null; }
+
+                const existingApps = getApps();
+                for (const oldApp of existingApps) {
+                    await deleteApp(oldApp);
+                }
+
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                const cred = (typeof __initial_auth_token !== 'undefined' && __initial_auth_token)
+                    ? await signInWithCustomToken(auth, __initial_auth_token)
+                    : await signInAnonymously(auth);
+
+                currentUser = cred.user;
+                if (currentUser) {
+                    state.useCloud = true;
+                    updateSyncBadge("מחובר לענן — מתעדכן לכולם", "emerald");
+                    subscribeToFirestore();
+                    return true;
                 }
             } catch (err) {
-                console.warn("Firestore unavailable, falling back to localStorage:", err);
+                console.warn("Firestore connection failed, falling back to localStorage:", err);
             }
-
-            state.useCloud = false;
-            updateSyncBadge("שמירה מקומית", "amber");
-            loadFromLocalStorage();
-            renderAll();
+            return false;
         }
 
         function subscribeToFirestore() {
             if (!db || !currentUser) return;
 
             const settingsRef = doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main');
-            onSnapshot(settingsRef, (snap) => {
+            unsubSettings = onSnapshot(settingsRef, (snap) => {
                 if (snap.exists()) {
                     const data = snap.data();
                     state.settings = {
-                        ...DEFAULT_SETTINGS,
-                        ...data,
-                        links: { ...DEFAULT_SETTINGS.links, ...(data.links || {}) }
+                        pinnedVisible: Boolean(data.pinnedVisible),
+                        pinnedText: String(data.pinnedText || "").slice(0, 1000),
+                        links: {
+                            moodle: sanitizeSafeUrl(data.links?.moodle, DEFAULT_SETTINGS.links.moodle),
+                            portal: sanitizeSafeUrl(data.links?.portal, DEFAULT_SETTINGS.links.portal),
+                            whatsapp: sanitizeSafeUrl(data.links?.whatsapp, DEFAULT_SETTINGS.links.whatsapp)
+                        }
                     };
                 } else {
                     setDoc(settingsRef, DEFAULT_SETTINGS).catch(console.error);
@@ -794,7 +1056,7 @@
             }, (err) => console.error("Settings listener error:", err));
 
             const eventsRef = collection(db, 'artifacts', appId, 'public', 'data', 'course_events');
-            onSnapshot(eventsRef, (snap) => {
+            unsubEvents = onSnapshot(eventsRef, (snap) => {
                 if (snap.empty) {
                     if (!localStorage.getItem("aac_bella_seeded_v3")) {
                         localStorage.setItem("aac_bella_seeded_v3", "true");
@@ -806,7 +1068,10 @@
                     }
                     state.events = [];
                 } else {
-                    state.events = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    state.events = snap.docs.map(d => ({
+                        id: d.id,
+                        ...validateEventPayload(d.data())
+                    }));
                 }
                 renderAll();
             }, (err) => console.error("Events listener error:", err));
@@ -819,13 +1084,20 @@
                     const parsed = JSON.parse(raw);
                     if (parsed.settings) {
                         state.settings = {
-                            ...DEFAULT_SETTINGS,
-                            ...parsed.settings,
-                            links: { ...DEFAULT_SETTINGS.links, ...(parsed.settings.links || {}) }
+                            pinnedVisible: Boolean(parsed.settings.pinnedVisible),
+                            pinnedText: String(parsed.settings.pinnedText || "").slice(0, 1000),
+                            links: {
+                                moodle: sanitizeSafeUrl(parsed.settings.links?.moodle, DEFAULT_SETTINGS.links.moodle),
+                                portal: sanitizeSafeUrl(parsed.settings.links?.portal, DEFAULT_SETTINGS.links.portal),
+                                whatsapp: sanitizeSafeUrl(parsed.settings.links?.whatsapp, DEFAULT_SETTINGS.links.whatsapp)
+                            }
                         };
                     }
                     if (Array.isArray(parsed.events)) {
-                        state.events = parsed.events;
+                        state.events = parsed.events.map(ev => ({
+                            id: String(ev.id || "ev-" + Date.now()),
+                            ...validateEventPayload(ev)
+                        }));
                     }
                 }
             } catch (e) {
@@ -891,13 +1163,13 @@
             const container = document.getElementById('quick-links-container');
             const links = state.settings.links || DEFAULT_SETTINGS.links;
             const items = [
-                { label: "מודל (Moodle)", url: links.moodle, icon: "fa-solid fa-book-open" },
-                { label: "פורטל סטודנטים", url: links.portal, icon: "fa-solid fa-user-graduate" },
-                { label: "קבוצת וואטסאפ", url: links.whatsapp, icon: "fa-brands fa-whatsapp" }
+                { label: "מודל (Moodle)", url: sanitizeSafeUrl(links.moodle, DEFAULT_SETTINGS.links.moodle), icon: "fa-solid fa-book-open" },
+                { label: "פורטל סטודנטים", url: sanitizeSafeUrl(links.portal, DEFAULT_SETTINGS.links.portal), icon: "fa-solid fa-user-graduate" },
+                { label: "קבוצת וואטסאפ", url: sanitizeSafeUrl(links.whatsapp, DEFAULT_SETTINGS.links.whatsapp), icon: "fa-brands fa-whatsapp" }
             ];
 
             container.innerHTML = items.map(item => `
-                <a href="${escapeHTML(item.url || '#')}" target="_blank" rel="noopener noreferrer"
+                <a href="${escapeHTML(item.url)}" target="_blank" rel="noopener noreferrer"
                     class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-700 hover:text-blue-700 bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3.5 py-1.5 rounded-xl transition">
                     <i class="${item.icon} text-blue-600"></i>
                     <span>${escapeHTML(item.label)}</span>
@@ -930,6 +1202,8 @@
                 const timeText = formatTimeRange(ev.startTime, ev.endTime);
                 const dateText = formatFullHebrewDate(ev.date);
                 const isDone = Boolean(ev.completed);
+                const safeId = escapeHTML(ev.id);
+                const safeDate = escapeHTML(ev.date);
 
                 return `
                     <article class="bg-white rounded-2xl p-5 border border-slate-200/90 hover:border-blue-300 shadow-xs transition flex flex-col justify-between fade-in ${isDone ? 'opacity-70' : ''}">
@@ -969,22 +1243,22 @@
                         </div>
 
                         <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-                            <button onclick="openCalendarOnDate('${ev.date}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <button onclick="openCalendarOnDate('${safeDate}')" class="text-xs font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
                                 <i class="fa-regular fa-calendar-days"></i>
                                 <span>הצג בלוח שנה</span>
                             </button>
 
                             ${state.isAdmin ? `
                                 <div class="flex items-center gap-1.5">
-                                    <button onclick="toggleEventCompleted('${ev.id}')" title="סמן כהושלם"
+                                    <button onclick="toggleEventCompleted('${safeId}')" title="סמן כהושלם"
                                         class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700 hover:bg-emerald-50 hover:text-emerald-700'} transition">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
-                                    <button onclick="openEventModal('${ev.id}')" title="ערוך אירוע"
+                                    <button onclick="openEventModal('${safeId}')" title="ערוך אירוע"
                                         class="px-2.5 py-1.5 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold transition">
                                         <i class="fa-solid fa-pen"></i>
                                     </button>
-                                    <button onclick="promptDeleteEvent('${ev.id}')" title="מחק אירוע"
+                                    <button onclick="promptDeleteEvent('${safeId}')" title="מחק אירוע"
                                         class="px-2.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -1005,7 +1279,7 @@
         };
 
         window.openCalendarOnDate = function(isoDate) {
-            if (isoDate) {
+            if (isoDate && /^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
                 const [y, m] = isoDate.split('-').map(Number);
                 state.viewYear = y;
                 state.viewMonth = m - 1;
@@ -1036,6 +1310,7 @@
         };
 
         window.selectCalendarDate = function(isoDate) {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return;
             state.selectedDate = isoDate;
             renderCalendar();
             renderSelectedDayDetails();
@@ -1142,6 +1417,7 @@
             container.innerHTML = dayEvents.map(ev => {
                 const cat = CATEGORIES[ev.category] || CATEGORIES.general;
                 const isDone = Boolean(ev.completed);
+                const safeId = escapeHTML(ev.id);
                 return `
                     <div class="bg-white rounded-xl p-3.5 border border-slate-200 space-y-2 ${isDone ? 'opacity-70' : ''}">
                         <div class="flex items-center justify-between gap-2">
@@ -1160,13 +1436,13 @@
                         <p class="text-xs text-slate-600 leading-relaxed">${escapeHTML(ev.description)}</p>
                         ${state.isAdmin ? `
                             <div class="pt-2 border-t border-slate-100 flex items-center justify-end gap-1.5">
-                                <button onclick="toggleEventCompleted('${ev.id}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-semibold">
+                                <button onclick="toggleEventCompleted('${safeId}')" class="px-2 py-1 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 text-xs font-semibold">
                                     ${isDone ? 'בטל השלמה' : 'סמן כהושלם'}
                                 </button>
-                                <button onclick="openEventModal('${ev.id}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold">
+                                <button onclick="openEventModal('${safeId}')" class="px-2 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold">
                                     ערוך
                                 </button>
-                                <button onclick="promptDeleteEvent('${ev.id}')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold">
+                                <button onclick="promptDeleteEvent('${safeId}')" class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold">
                                     מחק
                                 </button>
                             </div>
@@ -1194,8 +1470,16 @@
             });
         }
 
+        function assertAdminAuthorized() {
+            return (
+                state.isAdmin === true &&
+                typeof state.adminProofHash === "string" &&
+                constantTimeEqual(state.adminProofHash, AUTH_CRYPTO.hashHex)
+            );
+        }
+
         window.openPasswordModal = function() {
-            if (state.isAdmin) {
+            if (assertAdminAuthorized()) {
                 showToast("אתה כבר מחובר כמנהל", "info");
                 return;
             }
@@ -1217,23 +1501,54 @@
             }
         };
 
-        window.handlePasswordSubmit = function(e) {
+        window.handlePasswordSubmit = async function(e) {
             e.preventDefault();
-            const pass = document.getElementById('admin-password-input').value;
             const errEl = document.getElementById('password-error-msg');
-            if (pass === ADMIN_PASS) {
+            const errTextEl = document.getElementById('password-error-text');
+            const inputEl = document.getElementById('admin-password-input');
+
+            // Brute-force lockout check
+            const guard = getLoginGuardState();
+            const now = Date.now();
+            if (guard.lockedUntil > now) {
+                const secsLeft = Math.ceil((guard.lockedUntil - now) / 1000);
+                errTextEl.textContent = `יותר מדי ניסיונות שגויים. נסה שוב בעוד ${secsLeft} שניות.`;
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            const pass = inputEl.value;
+            const computedHash = await derivePasswordHash(pass);
+
+            if (constantTimeEqual(computedHash, AUTH_CRYPTO.hashHex)) {
+                setLoginGuardState(0, 0);
+                inputEl.value = '';
                 errEl.classList.add('hidden');
+                state.adminProofHash = computedHash;
                 closeModal('password-modal');
                 enableAdminMode(true);
             } else {
+                const nextFailures = guard.failures + 1;
+                if (nextFailures >= MAX_FAILED_ATTEMPTS) {
+                    setLoginGuardState(0, now + LOCKOUT_DURATION_MS);
+                    errTextEl.textContent = "הגישה נחסמה זמנית ל-5 דקות עקב ריבוי ניסיונות שגויים.";
+                } else {
+                    setLoginGuardState(nextFailures, 0);
+                    errTextEl.textContent = `סיסמה שגויה (${nextFailures}/${MAX_FAILED_ATTEMPTS} ניסיונות).`;
+                }
                 errEl.classList.remove('hidden');
-                document.getElementById('admin-password-input').focus();
+                inputEl.value = '';
+                inputEl.focus();
             }
         };
 
         function enableAdminMode(notify = true) {
+            if (!constantTimeEqual(state.adminProofHash, AUTH_CRYPTO.hashHex)) return;
             state.isAdmin = true;
-            sessionStorage.setItem("aac_bella_admin_auth", "true");
+            sessionStorage.setItem(SESSION_AUTH_KEY, JSON.stringify({
+                proof: state.adminProofHash,
+                expiresAt: Date.now() + SESSION_TTL_MS
+            }));
             document.getElementById('admin-toolbar').classList.remove('hidden');
             document.getElementById('header-admin-btn').classList.add('hidden');
             document.getElementById('footer-admin-btn').classList.add('hidden');
@@ -1242,12 +1557,13 @@
                 if (el.tagName === 'BUTTON') el.classList.add('inline-flex');
             });
             renderAll();
-            if (notify) showToast("מצב עריכה הופעל", "success");
+            if (notify) showToast("מצב עריכה מאובטח הופעל", "success");
         }
 
         window.logoutAdmin = function() {
             state.isAdmin = false;
-            sessionStorage.removeItem("aac_bella_admin_auth");
+            state.adminProofHash = "";
+            sessionStorage.removeItem(SESSION_AUTH_KEY);
             document.getElementById('admin-toolbar').classList.add('hidden');
             document.getElementById('header-admin-btn').classList.remove('hidden');
             document.getElementById('footer-admin-btn').classList.remove('hidden');
@@ -1259,6 +1575,75 @@
             showToast("התנתקת ממצב עריכה", "info");
         };
 
+        // ==================== CLOUD CONFIG & SHARE URL ====================
+
+        window.openCloudSetupModal = function() {
+            if (!assertAdminAuthorized()) return;
+            const currentCfg = resolveFirebaseConfig();
+            document.getElementById('cloud-config-input').value = currentCfg
+                ? JSON.stringify(currentCfg, null, 2)
+                : "";
+            openModal('cloud-setup-modal');
+        };
+
+        window.handleCloudConfigSubmit = async function(e) {
+            e.preventDefault();
+            if (!assertAdminAuthorized()) return;
+            const raw = document.getElementById('cloud-config-input').value.trim();
+            if (!raw) return;
+
+            try {
+                // Support both pure JSON and JS object literal pasted from Firebase Console
+                const normalized = raw
+                    .replace(/^[^{]*({[\s\S]*})[^}]*$/, '$1')
+                    .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":')
+                    .replace(/'/g, '"');
+                const parsed = JSON.parse(normalized);
+
+                if (!parsed.apiKey || !parsed.projectId) {
+                    showToast("חסרים שדות חובה (apiKey / projectId)", "error");
+                    return;
+                }
+
+                localStorage.setItem(CLOUD_CONFIG_STORAGE_KEY, JSON.stringify(parsed));
+                closeModal('cloud-setup-modal');
+                const ok = await connectToCloud();
+                if (ok) {
+                    updateShareableUrlDisplay();
+                    showToast("חובר לענן בהצלחה! הקישור לשיתוף מוכן", "success");
+                } else {
+                    showToast("לא הצלחנו להתחבר — בדוק את ההגדרות ב-Firebase", "error");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("פורמט ההגדרה לא תקין — העתק את אובייקט ה-firebaseConfig", "error");
+            }
+        };
+
+        window.clearSavedCloudConfig = function() {
+            if (!assertAdminAuthorized()) return;
+            localStorage.removeItem(CLOUD_CONFIG_STORAGE_KEY);
+            document.getElementById('cloud-config-input').value = "";
+            showToast("הגדרת הענן המקומית נוקתה", "info");
+        };
+
+        function buildShareableUrl() {
+            const baseUrl = window.location.origin + window.location.pathname;
+            const cfg = resolveFirebaseConfig();
+            if (cfg && cfg.apiKey && cfg.projectId) {
+                try {
+                    const encoded = btoa(JSON.stringify(cfg));
+                    return `${baseUrl}?fb=${encodeURIComponent(encoded)}`;
+                } catch {}
+            }
+            return window.location.href;
+        }
+
+        function updateShareableUrlDisplay() {
+            const input = document.getElementById('current-page-url');
+            if (input) input.value = buildShareableUrl();
+        }
+
         // ==================== CRUD OPERATIONS ====================
 
         window.openEventModalForSelectedDate = function() {
@@ -1266,7 +1651,7 @@
         };
 
         window.openEventModal = function(eventId = null, prefillDate = null) {
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             const form = document.getElementById('event-form');
             const titleEl = document.getElementById('event-modal-title');
             form.reset();
@@ -1296,19 +1681,21 @@
 
         window.handleEventSubmit = async function(e) {
             e.preventDefault();
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
 
             const id = document.getElementById('event-id').value;
-            const payload = {
-                title: document.getElementById('event-title').value.trim(),
+            const payload = validateEventPayload({
+                title: document.getElementById('event-title').value,
                 date: document.getElementById('event-date').value,
                 startTime: document.getElementById('event-start-time').value,
                 endTime: document.getElementById('event-end-time').value,
                 category: document.getElementById('event-category').value,
-                location: document.getElementById('event-location').value.trim(),
-                description: document.getElementById('event-description').value.trim(),
+                location: document.getElementById('event-location').value,
+                description: document.getElementById('event-description').value,
                 completed: document.getElementById('event-completed').checked
-            };
+            });
+
+            if (!payload.title) return;
 
             closeModal('event-modal');
 
@@ -1323,10 +1710,10 @@
                 try {
                     if (id) {
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_events', id), payload);
-                        showToast("האירוע עודכן", "success");
+                        showToast("האירוע עודכן בענן לכולם", "success");
                     } else {
                         await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'course_events'), payload);
-                        showToast("האירוע נוסף ללוח", "success");
+                        showToast("האירוע נוסף ללוח בענן", "success");
                     }
                 } catch (err) {
                     console.error(err);
@@ -1336,10 +1723,10 @@
                 if (id) {
                     const idx = state.events.findIndex(item => item.id === id);
                     if (idx !== -1) state.events[idx] = { id, ...payload };
-                    showToast("האירוע עודכן", "success");
+                    showToast("האירוע עודכן מקומית", "success");
                 } else {
                     state.events.push({ id: "ev-" + Date.now(), ...payload });
-                    showToast("האירוע נוסף ללוח", "success");
+                    showToast("האירוע נוסף מקומית (חבר ענן לסנכרון לכולם)", "info");
                 }
                 saveToLocalStorage();
                 renderAll();
@@ -1347,7 +1734,7 @@
         };
 
         window.toggleEventCompleted = async function(id) {
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             const ev = state.events.find(item => item.id === id);
             if (!ev) return;
             const nextCompleted = !Boolean(ev.completed);
@@ -1367,10 +1754,10 @@
 
         let pendingDeleteId = null;
         window.promptDeleteEvent = function(id) {
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             pendingDeleteId = id;
             document.getElementById('confirm-delete-btn').onclick = async () => {
-                if (!pendingDeleteId) return;
+                if (!assertAdminAuthorized() || !pendingDeleteId) return;
                 const targetId = pendingDeleteId;
                 pendingDeleteId = null;
                 closeModal('delete-confirm-modal');
@@ -1378,7 +1765,7 @@
                 if (state.useCloud && db && currentUser) {
                     try {
                         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_events', targetId));
-                        showToast("האירוע נמחק", "info");
+                        showToast("האירוע נמחק בענן", "info");
                     } catch (err) {
                         console.error(err);
                         showToast("שגיאה במחיקה", "error");
@@ -1394,7 +1781,7 @@
         };
 
         window.openHeaderEditModal = function() {
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             document.getElementById('edit-pinned-visible').checked = Boolean(state.settings.pinnedVisible);
             document.getElementById('edit-pinned-text').value = state.settings.pinnedText || "";
             openModal('header-edit-modal');
@@ -1402,15 +1789,15 @@
 
         window.handleHeaderEditSubmit = async function(e) {
             e.preventDefault();
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             state.settings.pinnedVisible = document.getElementById('edit-pinned-visible').checked;
-            state.settings.pinnedText = document.getElementById('edit-pinned-text').value.trim();
+            state.settings.pinnedText = document.getElementById('edit-pinned-text').value.trim().slice(0, 1000);
             closeModal('header-edit-modal');
 
             if (state.useCloud && db && currentUser) {
                 try {
                     await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
-                    showToast("ההודעה הנעוצה עודכנה", "success");
+                    showToast("ההודעה הנעוצה עודכנה בענן", "success");
                 } catch (err) {
                     console.error(err);
                 }
@@ -1422,7 +1809,7 @@
         };
 
         window.openLinksEditModal = function() {
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             const links = state.settings.links || DEFAULT_SETTINGS.links;
             document.getElementById('link-moodle').value = links.moodle || "";
             document.getElementById('link-portal').value = links.portal || "";
@@ -1432,18 +1819,18 @@
 
         window.handleLinksEditSubmit = async function(e) {
             e.preventDefault();
-            if (!state.isAdmin) return;
+            if (!assertAdminAuthorized()) return;
             state.settings.links = {
-                moodle: document.getElementById('link-moodle').value.trim(),
-                portal: document.getElementById('link-portal').value.trim(),
-                whatsapp: document.getElementById('link-whatsapp').value.trim()
+                moodle: sanitizeSafeUrl(document.getElementById('link-moodle').value, DEFAULT_SETTINGS.links.moodle),
+                portal: sanitizeSafeUrl(document.getElementById('link-portal').value, DEFAULT_SETTINGS.links.portal),
+                whatsapp: sanitizeSafeUrl(document.getElementById('link-whatsapp').value, DEFAULT_SETTINGS.links.whatsapp)
             };
             closeModal('links-edit-modal');
 
             if (state.useCloud && db && currentUser) {
                 try {
                     await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'course_settings', 'main'), state.settings);
-                    showToast("הקישורים המהירים עודכנו", "success");
+                    showToast("הקישורים המהירים עודכנו בענן", "success");
                 } catch (err) {
                     console.error(err);
                 }
@@ -1455,15 +1842,25 @@
         };
 
         window.openShareInfoModal = function() {
-            document.getElementById('current-page-url').value = window.location.href;
+            updateShareableUrlDisplay();
             openModal('share-info-modal');
         };
 
-        window.copyCurrentUrl = function() {
+        window.copyCurrentUrl = async function() {
             const input = document.getElementById('current-page-url');
-            input.select();
-            document.execCommand('copy');
-            showToast("הקישור הועתק", "success");
+            const urlToCopy = input.value;
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(urlToCopy);
+                } else {
+                    input.select();
+                    document.execCommand('copy');
+                }
+                showToast("הקישור הועתק ללוח", "success");
+            } catch {
+                input.select();
+                showToast("סמן והעתק את הקישור ידנית", "info");
+            }
         };
 
         // ==================== UTILITIES ====================
@@ -1495,7 +1892,7 @@
         }
 
         function formatFullHebrewDate(iso) {
-            if (!iso) return "";
+            if (!iso || !/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
             const [y, m, d] = iso.split('-').map(Number);
             return new Intl.DateTimeFormat('he-IL', {
                 weekday: 'long',
