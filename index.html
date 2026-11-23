@@ -1034,7 +1034,6 @@
             const widget = document.getElementById("side-calendar-widget");
             if (!widget) return;
 
-            // Restore saved position if valid within viewport
             try {
                 const rawPos = localStorage.getItem(WIDGET_POS_KEY);
                 if (rawPos) {
@@ -1234,13 +1233,12 @@
                     .filter(item => item.label && item.url);
             }
             if (data?.links && typeof data.links === "object") {
-                const migrated = [
+                return [
                     { id: "lnk-moodle", label: "מודל (Moodle)", url: sanitizeSafeUrl(data.links.moodle, DEFAULT_QUICK_LINKS[0].url), icon: "fa-solid fa-book-open" },
                     { id: "lnk-portal", label: "פורטל סטודנטים", url: sanitizeSafeUrl(data.links.portal, DEFAULT_QUICK_LINKS[1].url), icon: "fa-solid fa-user-graduate" },
                     { id: "lnk-whatsapp", label: "קבוצת וואטסאפ", url: sanitizeSafeUrl(data.links.whatsapp, DEFAULT_QUICK_LINKS[2].url), icon: "fa-brands fa-whatsapp" },
                     DEFAULT_QUICK_LINKS[3]
                 ];
-                return migrated;
             }
             return structuredClone(DEFAULT_QUICK_LINKS);
         }
