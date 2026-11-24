@@ -843,6 +843,19 @@
         const MAX_FAILED_ATTEMPTS = 5;
         const LOCKOUT_DURATION_MS = 5 * 60 * 1000;
 
+        // HTML escaping table.
+        // The entities are assembled from String.fromCharCode(38) on purpose: if they were
+        // typed literally, copy/paste or chat tools can decode them back into plain
+        // characters, which breaks the string literals and freezes every button on the page.
+        const AMP = String.fromCharCode(38);
+        const HTML_ESCAPES = {
+            "&": AMP + "amp;",
+            "<": AMP + "lt;",
+            ">": AMP + "gt;",
+            '"': AMP + "quot;",
+            "'": AMP + "#39;"
+        };
+
         const DEFAULT_FIREBASE_CONFIG = {
             apiKey: "AIzaSyCKRaaIkBlouZbCFfAh8H3RQzsDByIKMr4",
             authDomain: "aac-english-course.firebaseapp.com",
@@ -1643,6 +1656,10 @@
 
                             ${state.isAdmin ? `
                                 <div class="flex items-center gap-1.5">
+                                    <button onclick="shareEventToWhatsApp('${safeId}')" title="שלח לקבוצת הוואטסאפ"
+                                        class="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-semibold transition">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </button>
                                     <button onclick="toggleEventCompleted('${safeId}')" title="סמן כהושלם"
                                         class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700'} transition">
                                         <i class="fa-solid fa-check"></i>
@@ -1701,6 +1718,25 @@
             a.remove();
             URL.revokeObjectURL(url);
             showToast("קובץ יומן ירד למכשיר", "success");
+        };
+
+        // Opens WhatsApp with a ready-made message about the event.
+        // The admin picks the group and presses send. Free: no API, no phone numbers stored.
+        window.shareEventToWhatsApp = function(id) {
+            const ev = state.events.find(item => item.id === id);
+            if (!ev) return;
+
+            const icons = { exam: "📝", presentation: "🎤", assignment: "📌", general: "📢" };
+            const lines = [
+                `${icons[ev.category] || "📢"} *${ev.title}*`,
+                `📅 ${formatFullHebrewDate(ev.date)}`,
+                `🕒 ${formatTimeRange(ev.startTime, ev.endTime)}`
+            ];
+            if (ev.location) lines.push(`📍 ${ev.location}`);
+            if (ev.description) lines.push("", ev.description);
+            lines.push("", `לכל העדכונים: ${buildShareableUrl()}`);
+
+            window.open("https://wa.me/?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
         };
 
         // ==================== CALENDAR MODAL LOGIC ====================
@@ -1869,6 +1905,9 @@
                         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${formatDescriptionWithLinks(ev.description)}</p>
                         ${state.isAdmin ? `
                             <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
+                                <button onclick="shareEventToWhatsApp('${safeId}')" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold">
+                                    שלח לוואטסאפ
+                                </button>
                                 <button onclick="toggleEventCompleted('${safeId}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 text-slate-700 dark:text-slate-300 hover:text-emerald-700 text-xs font-semibold">
                                     ${isDone ? 'בטל השלמה' : 'סמן כהושלם'}
                                 </button>
@@ -2445,15 +2484,11 @@
             return "כל היום";
         }
 
+        // Escapes HTML special characters using the HTML_ESCAPES table defined at the top.
         function escapeHTML(str) {
-        if (!str) return "";
-        return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
+            if (!str) return "";
+            return String(str).replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch]);
+        }
 
         function formatDescriptionWithLinks(str) {
             if (!str) return "";
