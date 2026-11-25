@@ -4,6 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>קורס אנגלית — רמת בסיסי | מכללת אשקלון</title>
+    <meta name="description" content="לוח אירועים ועדכונים לקורס אנגלית — רמת בסיסי, מכללת אשקלון. מבחנים, פרזנטציות והגשות במקום אחד.">
+    <meta name="theme-color" content="#2563eb">
+
+    <!-- Link preview (WhatsApp / social). The image file og-image.png must sit next to index.html in the repo. -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="he_IL">
+    <meta property="og:url" content="https://noamrevivo.github.io/course-events/">
+    <meta property="og:title" content="אנגלית — רמת בסיסי | לוח אירועים">
+    <meta property="og:description" content="מבחנים, פרזנטציות, הגשות ועדכונים של הקורס — תמיד מעודכן, במקום אחד.">
+    <meta property="og:image" content="https://noamrevivo.github.io/course-events/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Site icon (inline, no extra file needed) -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='10' width='52' height='48' rx='10' fill='%232563eb'/%3E%3Cpath d='M6 20a10 10 0 0 1 10-10h32a10 10 0 0 1 10 10v4H6z' fill='%231e40af'/%3E%3Crect x='17' y='4' width='5' height='12' rx='2.5' fill='%231e293b'/%3E%3Crect x='42' y='4' width='5' height='12' rx='2.5' fill='%231e293b'/%3E%3Crect x='14' y='32' width='10' height='9' rx='2' fill='white'/%3E%3Crect x='27' y='32' width='10' height='9' rx='2' fill='white'/%3E%3Crect x='40' y='32' width='10' height='9' rx='2' fill='white'/%3E%3Crect x='14' y='45' width='10' height='9' rx='2' fill='white'/%3E%3Crect x='27' y='45' width='10' height='9' rx='2' fill='white'/%3E%3C/svg%3E">
+
     
     <!-- Google Fonts: Heebo & Assistant -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -93,6 +110,19 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* Header: soft gradient + decorative blurred shapes */
+        .site-header { background: linear-gradient(180deg, var(--accent-50) 0%, #ffffff 75%); }
+        [data-mode="dark"] .site-header { background: linear-gradient(180deg, rgba(148, 163, 184, 0.10) 0%, #0f172a 75%); }
+        .accent-blob { background: var(--accent-200); opacity: 0.55; }
+        [data-mode="dark"] .accent-blob { opacity: 0.14; }
+
+        /* "Next up" card at the top of the page */
+        .next-up-card {
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.20), transparent 42%),
+                linear-gradient(135deg, var(--accent-600) 0%, var(--accent-800) 100%);
+        }
+
         /* Draggable Floating Calendar Widget */
         #side-calendar-widget {
             touch-action: none;
@@ -162,8 +192,10 @@
     </div>
 
     <!-- Clean Landing Page Header -->
-    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 transition-colors">
-        <div class="max-w-5xl mx-auto px-4 pt-5 pb-8 sm:pt-7 sm:pb-10">
+    <header class="site-header relative overflow-hidden border-b border-slate-200 dark:border-slate-800 transition-colors">
+        <div class="accent-blob pointer-events-none absolute -top-24 -left-20 w-72 h-72 rounded-full blur-3xl"></div>
+        <div class="accent-blob pointer-events-none absolute -bottom-28 -right-16 w-64 h-64 rounded-full blur-3xl"></div>
+        <div class="relative max-w-5xl mx-auto px-4 pt-5 pb-8 sm:pt-7 sm:pb-10">
             <!-- Top Row: Date Badge + Theme/Mode Toggles + Share + Admin Login -->
             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
                 <div class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium">
@@ -246,7 +278,12 @@
     <!-- Main Content -->
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-7 space-y-6">
 
-        <!-- Filter Pills + Search + Quick Links Row -->
+        <!-- "Next up" card (filled by renderNextUp) -->
+        <section id="next-up-section" class="hidden fade-in">
+            <div id="next-up-card" class="next-up-card rounded-2xl p-5 sm:p-6 text-white shadow-lg"></div>
+        </section>
+
+<!-- Filter Pills + Search + Quick Links Row -->
         <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <!-- Category Pills with Counts -->
@@ -265,6 +302,9 @@
                     </button>
                     <button data-filter="general" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
                         הודעות <span id="count-general" class="opacity-75 text-[11px] mr-0.5"></span>
+                    </button>
+                    <button data-filter="custom" class="filter-btn px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+                        אחר <span id="count-custom" class="opacity-75 text-[11px] mr-0.5"></span>
                     </button>
                 </div>
 
@@ -323,8 +363,11 @@
                 </div>
             </div>
 
-            <div id="events-feed-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Event cards rendered dynamically -->
+            <div id="events-feed-container" class="space-y-6">
+                <div id="feed-skeleton" class="grid grid-cols-1 md:grid-cols-2 gap-4" aria-hidden="true">
+                    <div class="h-44 rounded-2xl bg-slate-200/70 dark:bg-slate-800 animate-pulse"></div>
+                    <div class="h-44 rounded-2xl bg-slate-200/70 dark:bg-slate-800 animate-pulse"></div>
+                </div>
             </div>
 
             <div id="empty-state" class="hidden bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-10 text-center">
@@ -576,16 +619,41 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-800/50 p-3 space-y-2.5">
+                    <p class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-hourglass-half text-accent-600"></i>
+                        <span>פתוח לאורך כמה ימים? (בוחן / הגשה) — לא חובה</span>
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">תאריך סגירה</label>
+                            <input type="date" id="event-close-date"
+                                class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">שעת סגירה</label>
+                            <input type="time" id="event-close-time"
+                                class="w-full px-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400">התאריך והשעה שלמעלה הם מועד הפתיחה. האירוע יופיע בלוח השנה בכל הימים עד הסגירה, ובכרטיס יופיע "נסגר בעוד...".</p>
+                </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">קטגוריה *</label>
-                        <select id="event-category" required
+                        <select id="event-category" required onchange="handleCategoryChange()"
                             class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
                             <option value="exam">מבחנים</option>
                             <option value="presentation">פרזנטציות</option>
                             <option value="assignment">הגשות</option>
                             <option value="general">הודעות</option>
+                            <option value="custom">אחר — הקלד סוג משלך...</option>
                         </select>
+                        <input type="text" id="event-custom-category" list="custom-category-suggestions" maxlength="30"
+                            placeholder="הקלד סוג אירוע, למשל: חג / ביטול שיעור / בוחן מודל"
+                            class="hidden mt-2 w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
+                        <datalist id="custom-category-suggestions"></datalist>
                     </div>
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">מיקום / כיתה</label>
@@ -600,7 +668,20 @@
                         class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm"></textarea>
                 </div>
 
-                <div class="flex flex-wrap items-center gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                    <div class="sm:col-span-3">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">קישור לאירוע (לא חובה)</label>
+                        <input type="url" id="event-link" dir="ltr" placeholder="https://moodle.aac.ac.il/..."
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm text-left">
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">טקסט הכפתור</label>
+                        <input type="text" id="event-link-label" maxlength="40" placeholder="לדוגמה: פתח את הבוחן"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white outline-none text-sm">
+                    </div>
+                </div>
+
+<div class="flex flex-wrap items-center gap-5">
                     <label class="inline-flex items-center gap-2 cursor-pointer">
                         <input type="checkbox" id="event-pinned" class="w-4 h-4 rounded border-slate-300">
                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">נעץ בראש רשימת האירועים</span>
@@ -930,6 +1011,12 @@
                 badgeClass: "bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
                 dotClass: "bg-sky-500",
                 icon: "fa-solid fa-circle-info"
+            },
+            custom: {
+                label: "אחר",
+                badgeClass: "bg-teal-50 dark:bg-teal-950/70 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800",
+                dotClass: "bg-teal-500",
+                icon: "fa-solid fa-tag"
             }
         };
 
@@ -944,6 +1031,7 @@
             activeFilter: "all",
             searchQuery: "",
             hideCompleted: false,
+            showPast: false,
             viewYear: 2026,
             viewMonth: 10,
             selectedDate: "2026-11-29",
@@ -965,7 +1053,8 @@
         function initUIPreferences() {
             try {
                 const raw = localStorage.getItem(UI_PREFS_KEY);
-                const prefs = raw ? JSON.parse(raw) : { theme: "blue", mode: "light" };
+                const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+                const prefs = raw ? JSON.parse(raw) : { theme: "blue", mode: systemDark ? "dark" : "light" };
                 applyAccentTheme(prefs.theme === "pink" ? "pink" : "blue", false);
                 applyDarkMode(prefs.mode === "dark" ? "dark" : "light", false);
             } catch {
@@ -1263,12 +1352,20 @@
             const startTime = /^\d{2}:\d{2}$/.test(raw.startTime || "") ? raw.startTime : "";
             const endTime = /^\d{2}:\d{2}$/.test(raw.endTime || "") ? raw.endTime : "";
             const category = validCategories.includes(raw.category) ? raw.category : "general";
+            const customCategory = category === "custom"
+                ? (String(raw.customCategory || "").trim().slice(0, 30) || "אחר")
+                : "";
             const location = String(raw.location || "").trim().slice(0, 120);
             const description = String(raw.description || "").trim().slice(0, 1500);
             const completed = Boolean(raw.completed);
             const pinned = Boolean(raw.pinned);
 
-            return { title, date, startTime, endTime, category, location, description, completed, pinned };
+            const closeDate = (/^\d{4}-\d{2}-\d{2}$/.test(raw.closeDate || "") && raw.closeDate >= date) ? raw.closeDate : "";
+            const closeTime = (closeDate && /^\d{2}:\d{2}$/.test(raw.closeTime || "")) ? raw.closeTime : "";
+            const link = /^https?:\/\//i.test(String(raw.link || "").trim()) ? sanitizeSafeUrl(String(raw.link).trim(), "") : "";
+            const linkLabel = link ? String(raw.linkLabel || "").trim().slice(0, 40) : "";
+
+            return { title, date, startTime, endTime, category, customCategory, closeDate, closeTime, link, linkLabel, location, description, completed, pinned };
         }
 
         function resolveFirebaseConfig() {
@@ -1350,6 +1447,8 @@
                     }
                 }
             }, 30000);
+
+            startLiveTicker();
 
             const connected = await connectToCloud();
             if (!connected) {
@@ -1478,6 +1577,8 @@
             renderCalendar();
             renderSelectedDayDetails();
             updateWidgetBadge();
+            renderNextUp();
+            lastFeedSignature = computeFeedSignature();
         }
 
         function renderCurrentDate() {
@@ -1491,13 +1592,13 @@
         }
 
         function updateWidgetBadge() {
-            const nextEvent = [...state.events]
-                .filter(e => !e.completed)
-                .sort((a, b) => (a.date || "").localeCompare(b.date || ""))[0];
+            const nextEvent = pickNextUpEvent(new Date());
             const el = document.getElementById('widget-day-number');
             if (!el) return;
             if (nextEvent && nextEvent.date) {
-                const parts = nextEvent.date.split('-');
+                const nextInfo = getTimeInfo(nextEvent);
+                const badgeDate = (nextInfo.status === "ongoing" && nextEvent.closeDate) ? nextEvent.closeDate : nextEvent.date;
+                const parts = badgeDate.split('-');
                 el.textContent = `${Number(parts[2])}/${Number(parts[1])}`;
             } else {
                 const now = new Date();
@@ -1536,7 +1637,7 @@
         }
 
         function updateCategoryCounts() {
-            const counts = { all: state.events.length, exam: 0, presentation: 0, assignment: 0, general: 0 };
+            const counts = { all: state.events.length, exam: 0, presentation: 0, assignment: 0, general: 0, custom: 0 };
             state.events.forEach(ev => {
                 if (counts[ev.category] !== undefined) counts[ev.category]++;
             });
@@ -1567,121 +1668,481 @@
             renderEventsFeed();
         };
 
-        function renderEventsFeed() {
-            const container = document.getElementById('events-feed-container');
-            const emptyState = document.getElementById('empty-state');
+        // ==================== TIME HELPERS (countdown, sections, deadlines) ====================
 
-            const filtered = state.events
-                .filter(ev => state.activeFilter === "all" || ev.category === state.activeFilter)
-                .filter(ev => !state.hideCompleted || !ev.completed)
-                .filter(ev => {
-                    if (!state.searchQuery) return true;
-                    const hay = `${ev.title} ${ev.description} ${ev.location} ${ev.date}`.toLowerCase();
-                    return hay.includes(state.searchQuery);
-                })
-                .sort((a, b) => {
-                    if (Boolean(a.pinned) !== Boolean(b.pinned)) return a.pinned ? -1 : 1;
-                    const dCmp = (a.date || "").localeCompare(b.date || "");
-                    if (dCmp !== 0) return dCmp;
-                    return (a.startTime || "").localeCompare(b.startTime || "");
-                });
+        const WEEKDAY_LABELS = ["יום א'", "יום ב'", "יום ג'", "יום ד'", "יום ה'", "יום ו'", "שבת"];
+        const MONTHS_SHORT = ["ינו'", "פבר'", "מרץ", "אפר'", "מאי", "יוני", "יולי", "אוג'", "ספט'", "אוק'", "נוב'", "דצמ'"];
 
-            if (filtered.length === 0) {
-                container.innerHTML = "";
-                emptyState.classList.remove('hidden');
-                return;
+        const LEVEL_BADGE_CLASSES = {
+            urgent: "bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800",
+            soon: "bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+            normal: "bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
+            past: "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700"
+        };
+
+        let lastFeedSignature = "";
+
+        function parseLocalDateTime(dateISO, time, fallbackTime) {
+            const [y, m, d] = String(dateISO).split("-").map(Number);
+            const [hh, mm] = String(time || fallbackTime).split(":").map(Number);
+            return new Date(y, (m || 1) - 1, d || 1, hh || 0, mm || 0, 0, 0);
+        }
+
+        function startOfDay(date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        }
+
+        // Whole calendar days from "now" to the target date (negative = in the past).
+        function dayDiff(target, now) {
+            return Math.round((startOfDay(target) - startOfDay(now)) / 86400000);
+        }
+
+        // Israeli week: starts on Sunday.
+        function startOfWeekSunday(now) {
+            const d = startOfDay(now);
+            d.setDate(d.getDate() - d.getDay());
+            return d;
+        }
+
+        // When does the event open and when is it over?
+        // - Event with a closing date (quiz open until Tuesday): ends at closeDate + closeTime (default 23:59).
+        // - Regular event: ends at endTime, or at the end of its day when no end time was given.
+        function getEventWindow(ev) {
+            const start = parseLocalDateTime(ev.date, ev.startTime, "00:00");
+            let end = ev.closeDate
+                ? parseLocalDateTime(ev.closeDate, ev.closeTime, "23:59")
+                : parseLocalDateTime(ev.date, ev.endTime, "23:59");
+            if (end < start) end = parseLocalDateTime(ev.date, "", "23:59");
+            return { start, end };
+        }
+
+        // Every calendar day the event covers (a single day, or opening date through closing date).
+        function getEventDates(ev) {
+            if (!ev.date) return [];
+            const dates = [ev.date];
+            if (ev.closeDate && ev.closeDate > ev.date) {
+                const [y, m, d] = ev.date.split("-").map(Number);
+                const cur = new Date(y, m - 1, d);
+                for (let i = 0; i < 62; i++) {
+                    cur.setDate(cur.getDate() + 1);
+                    const iso = toISODate(cur.getFullYear(), cur.getMonth() + 1, cur.getDate());
+                    dates.push(iso);
+                    if (iso >= ev.closeDate) break;
+                }
+            }
+            return dates;
+        }
+
+        // Hebrew number words
+        function daysWord(n) { return n === 1 ? "יום" : n === 2 ? "יומיים" : `${n} ימים`; }
+        function hoursWord(n) { return n === 1 ? "שעה" : n === 2 ? "שעתיים" : `${n} שעות`; }
+        function minutesWord(n) { return n === 1 ? "דקה" : n === 2 ? "שתי דקות" : `${n} דקות`; }
+        function withVav(word) { return /^\d/.test(word) ? "ו-" + word : "ו" + word; }
+
+        function formatDuration(ms) {
+            const totalMin = Math.floor(ms / 60000);
+            if (totalMin < 1) return "פחות מדקה";
+            if (totalMin < 60) return minutesWord(totalMin);
+            if (totalMin < 1440) {
+                const h = Math.floor(totalMin / 60);
+                const m = totalMin % 60;
+                return m ? `${hoursWord(h)} ${withVav(minutesWord(m))}` : hoursWord(h);
+            }
+            const days = Math.floor(totalMin / 1440);
+            const h = Math.floor((totalMin % 1440) / 60);
+            if (days >= 2 || !h) return daysWord(days);
+            return `${daysWord(days)} ${withVav(hoursWord(h))}`;
+        }
+
+        // Short status for the badge on a card: "היום", "מחר", "בעוד 3 ימים", "נסגר היום ב-23:59", ...
+        function getTimeInfo(ev, now = new Date()) {
+            const { start, end } = getEventWindow(ev);
+            if (now > end) return { status: "past", label: "עבר", level: "past" };
+
+            if (now >= start) {
+                if (ev.closeDate) {
+                    const left = dayDiff(end, now);
+                    if (left <= 0) {
+                        return { status: "ongoing", label: "נסגר היום" + (ev.closeTime ? " ב-" + ev.closeTime : ""), level: "urgent" };
+                    }
+                    if (left === 1) return { status: "ongoing", label: "פתוח · נסגר מחר", level: "urgent" };
+                    return { status: "ongoing", label: "פתוח · נסגר בעוד " + daysWord(left), level: left <= 3 ? "soon" : "normal" };
+                }
+                return { status: "ongoing", label: ev.endTime ? "מתרחש עכשיו" : "היום", level: "urgent" };
             }
 
-            emptyState.classList.add('hidden');
-            container.innerHTML = filtered.map(ev => {
-                const cat = CATEGORIES[ev.category] || CATEGORIES.general;
-                const timeText = formatTimeRange(ev.startTime, ev.endTime);
-                const dateText = formatFullHebrewDate(ev.date);
-                const isDone = Boolean(ev.completed);
-                const isPinned = Boolean(ev.pinned);
-                const safeId = escapeHTML(ev.id);
-                const safeDate = escapeHTML(ev.date);
+            const diff = dayDiff(start, now);
+            if (diff <= 0) return { status: "upcoming", label: "היום", level: "urgent" };
+            if (diff === 1) return { status: "upcoming", label: "מחר", level: "urgent" };
+            return { status: "upcoming", label: "בעוד " + daysWord(diff), level: diff <= 3 ? "soon" : "normal" };
+        }
 
-                return `
-                    <article class="bg-white dark:bg-slate-900 rounded-2xl p-5 border ${isPinned ? 'border-accent-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-700' : 'border-slate-200/90 dark:border-slate-800'} hover:border-accent-300 shadow-xs transition flex flex-col justify-between fade-in ${isDone ? 'opacity-70' : ''}">
-                        <div>
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        // Big countdown text for the "next up" card.
+        function getHeroCountdownText(ev, now) {
+            const { start, end } = getEventWindow(ev);
+
+            if (now >= start) {
+                if (ev.closeDate) {
+                    const left = dayDiff(end, now);
+                    if (left >= 2) return "נסגר בעוד " + daysWord(left);
+                    if (left === 1) return "נסגר מחר" + (ev.closeTime ? " ב-" + ev.closeTime : "");
+                    return "נסגר בעוד " + formatDuration(end - now);
+                }
+                return ev.endTime ? "מתרחש עכשיו" : "היום";
+            }
+
+            const diff = dayDiff(start, now);
+            if (diff >= 2) return "בעוד " + daysWord(diff);
+            if (diff === 1) return "מחר" + (ev.startTime ? " ב-" + ev.startTime : "");
+            return "בעוד " + formatDuration(start - now);
+        }
+
+        // The event shown in the "next up" card: open-now items first (closest deadline), then the nearest start.
+        function pickNextUpEvent(now) {
+            const candidates = state.events
+                .filter(ev => !ev.completed && ev.date)
+                .map(ev => ({ ev, w: getEventWindow(ev) }))
+                .filter(x => now <= x.w.end);
+            if (candidates.length === 0) return null;
+
+            candidates.sort((a, b) => {
+                const aOn = now >= a.w.start;
+                const bOn = now >= b.w.start;
+                if (aOn !== bOn) return aOn ? -1 : 1;
+                return aOn ? a.w.end - b.w.end : a.w.start - b.w.start;
+            });
+            return candidates[0].ev;
+        }
+
+        // Short time text for the calendar side panel.
+        function formatEventTimeShort(ev) {
+            if (ev.closeDate) {
+                const [, m, d] = ev.closeDate.split("-").map(Number);
+                return `עד ${d}/${m}${ev.closeTime ? " " + ev.closeTime : ""}`;
+            }
+            return formatTimeRange(ev.startTime, ev.endTime);
+        }
+
+        // A string that changes whenever something moves between sections (used by the live ticker).
+        function computeFeedSignature() {
+            const now = new Date();
+            return getTodayISO() + "#" + state.events.map(ev => {
+                const info = getTimeInfo(ev, now);
+                return `${ev.id}:${info.status}:${info.label}:${ev.completed ? 1 : 0}`;
+            }).join("|");
+        }
+
+        // Returns badge info for an event. For custom types the label is the text the admin typed.
+        // The label returned here is already HTML-escaped and safe to put inside innerHTML.
+        function getCategoryInfo(ev) {
+            const base = CATEGORIES[ev.category] || CATEGORIES.general;
+            if (ev.category === "custom") {
+                return { ...base, label: escapeHTML(ev.customCategory || base.label) };
+            }
+            return base;
+        }
+
+        function buildDateTileHTML(ev, cat) {
+            const [y, m, d] = ev.date.split("-").map(Number);
+            const weekday = new Date(y, m - 1, d).getDay();
+            return `
+                <div class="date-tile shrink-0 w-14 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-center shadow-xs">
+                    <div class="${cat.dotClass} text-white text-[10px] font-bold py-0.5">${WEEKDAY_LABELS[weekday]}</div>
+                    <div class="text-2xl font-extrabold leading-none pt-1.5 text-slate-900 dark:text-white">${d}</div>
+                    <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 pb-1.5 pt-0.5">${MONTHS_SHORT[m - 1]}</div>
+                </div>`;
+        }
+
+        // Date / time / location line. iconCls colors the little icons (differs on the colored "next up" card).
+        function buildMetaHTML(ev, iconCls) {
+            const dateText = escapeHTML(formatFullHebrewDate(ev.date));
+            const spans = [];
+
+            if (ev.closeDate) {
+                const closeText = escapeHTML(formatFullHebrewDate(ev.closeDate)) + (ev.closeTime ? " · " + escapeHTML(ev.closeTime) : "");
+                spans.push(`<span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-hourglass-half ${iconCls}"></i><span>פתוח עד ${closeText}</span></span>`);
+                spans.push(`<span class="inline-flex items-center gap-1.5"><i class="fa-regular fa-calendar ${iconCls}"></i><span>נפתח ${dateText}${ev.startTime ? " · " + escapeHTML(ev.startTime) : ""}</span></span>`);
+            } else {
+                spans.push(`<span class="inline-flex items-center gap-1.5"><i class="fa-regular fa-calendar ${iconCls}"></i><span>${dateText}</span></span>`);
+                spans.push(`<span class="inline-flex items-center gap-1.5"><i class="fa-regular fa-clock ${iconCls}"></i><span>${escapeHTML(formatTimeRange(ev.startTime, ev.endTime))}</span></span>`);
+            }
+
+            if (ev.location) {
+                spans.push(`<span class="inline-flex items-center gap-1.5"><i class="fa-solid fa-location-dot ${iconCls}"></i><span>${escapeHTML(ev.location)}</span></span>`);
+            }
+            return spans.join("");
+        }
+
+        // Button for the event link (e.g. the Moodle quiz). Only http/https links are ever rendered.
+        function buildLinkButtonHTML(ev, compact = false) {
+            const safeLink = ev.link ? sanitizeSafeUrl(ev.link, "") : "";
+            if (!safeLink) return "";
+            const label = escapeHTML(ev.linkLabel || "פתח קישור");
+            const sizeCls = compact ? "text-xs px-3 py-1.5 mt-2" : "text-xs sm:text-sm px-4 py-2 mt-3";
+            return `<a href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" class="event-link-btn inline-flex items-center gap-2 bg-accent-600 hover:bg-accent-700 text-white font-bold rounded-xl transition ${sizeCls}"><i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i><span>${label}</span></a>`;
+        }
+
+        function buildEventCardHTML(ev, now) {
+            const cat = getCategoryInfo(ev);
+            const info = getTimeInfo(ev, now);
+            const isPast = info.status === "past";
+            const isDone = Boolean(ev.completed);
+            const isPinned = Boolean(ev.pinned);
+            const safeId = escapeHTML(ev.id);
+            const safeDate = escapeHTML(ev.date);
+
+            const countdownBadge = `<span data-level="${info.level}" class="countdown-badge inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${LEVEL_BADGE_CLASSES[info.level]}"><i class="${isPast ? 'fa-solid fa-flag-checkered' : 'fa-solid fa-hourglass-half'} text-[10px]"></i><span>${escapeHTML(info.label)}</span></span>`;
+
+            return `
+                <article data-event-id="${safeId}" class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl py-5 pr-6 pl-5 border ${isPinned ? 'border-accent-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-700' : 'border-slate-200/90 dark:border-slate-800'} hover:border-accent-300 shadow-xs transition flex flex-col justify-between fade-in ${(isPast || isDone) ? 'opacity-70' : ''}">
+                    <span class="category-stripe absolute inset-y-0 right-0 w-1.5 ${cat.dotClass}"></span>
+                    <div class="flex items-start gap-4">
+                        ${buildDateTileHTML(ev, cat)}
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                                 <div class="flex flex-wrap items-center gap-1.5">
                                     <span class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full border ${cat.badgeClass}">
                                         <i class="${cat.icon}"></i>
                                         <span>${cat.label}</span>
                                     </span>
                                     ${isPinned ? `<span class="inline-flex items-center gap-1 text-[11px] font-bold text-accent-700 bg-accent-50 border border-accent-200 px-2 py-0.5 rounded-full"><i class="fa-solid fa-thumbtack text-[10px]"></i><span>נעוץ</span></span>` : ''}
+                                    ${countdownBadge}
                                 </div>
                                 ${isDone ? `<span class="text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/70 border border-emerald-200 dark:border-emerald-800 px-2.5 py-0.5 rounded-full">הושלם</span>` : ''}
                             </div>
 
-                            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-1.5 ${isDone ? 'line-through text-slate-500' : ''}">
+                            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-1.5 break-words ${isDone ? 'line-through text-slate-500' : ''}">
                                 ${escapeHTML(ev.title)}
                             </h3>
 
                             <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs sm:text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2.5">
-                                <span class="inline-flex items-center gap-1.5">
-                                    <i class="fa-regular fa-calendar text-accent-600"></i>
-                                    <span>${dateText}</span>
-                                </span>
-                                <span class="inline-flex items-center gap-1.5">
-                                    <i class="fa-regular fa-clock text-accent-600"></i>
-                                    <span>${timeText}</span>
-                                </span>
-                                ${ev.location ? `
-                                    <span class="inline-flex items-center gap-1.5">
-                                        <i class="fa-solid fa-location-dot text-accent-600"></i>
-                                        <span>${escapeHTML(ev.location)}</span>
-                                    </span>
-                                ` : ''}
+                                ${buildMetaHTML(ev, "text-accent-600")}
                             </div>
 
                             <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">
                                 ${formatDescriptionWithLinks(ev.description)}
                             </p>
+
+                            ${buildLinkButtonHTML(ev)}
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-3">
+                            <button onclick="openCalendarOnDate('${safeDate}')" class="text-xs font-bold text-accent-600 hover:text-accent-800 flex items-center gap-1">
+                                <i class="fa-regular fa-calendar-days"></i>
+                                <span>הצג בלוח שנה</span>
+                            </button>
+                            <button onclick="downloadEventICS('${safeId}')" class="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1" title="הוסף ליומן בטלפון / במחשב">
+                                <i class="fa-solid fa-calendar-plus"></i>
+                                <span>שמור ליומן</span>
+                            </button>
                         </div>
 
-                        <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
-                            <div class="flex items-center gap-3">
-                                <button onclick="openCalendarOnDate('${safeDate}')" class="text-xs font-bold text-accent-600 hover:text-accent-800 flex items-center gap-1">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    <span>הצג בלוח שנה</span>
+                        ${state.isAdmin ? `
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="shareEventToWhatsApp('${safeId}')" title="שלח לקבוצת הוואטסאפ"
+                                    class="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-semibold transition">
+                                    <i class="fa-brands fa-whatsapp"></i>
                                 </button>
-                                <button onclick="downloadEventICS('${safeId}')" class="text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 flex items-center gap-1" title="הוסף ליומן בטלפון / במחשב">
-                                    <i class="fa-solid fa-calendar-plus"></i>
-                                    <span>שמור ליומן</span>
+                                <button onclick="toggleEventCompleted('${safeId}')" title="סמן כהושלם"
+                                    class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700'} transition">
+                                    <i class="fa-solid fa-check"></i>
+                                </button>
+                                <button onclick="duplicateEvent('${safeId}')" title="שכפל אירוע"
+                                    class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 text-xs font-semibold transition">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                                <button onclick="openEventModal('${safeId}')" title="ערוך אירוע"
+                                    class="px-2.5 py-1.5 rounded-lg bg-accent-50 text-accent-700 hover:bg-accent-100 text-xs font-semibold transition">
+                                    <i class="fa-solid fa-pen"></i>
+                                </button>
+                                <button onclick="promptDeleteEvent('${safeId}')" title="מחק אירוע"
+                                    class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
+                                    <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
+                        ` : ''}
+                    </div>
+                </article>
+            `;
+        }
 
-                            ${state.isAdmin ? `
-                                <div class="flex items-center gap-1.5">
-                                    <button onclick="shareEventToWhatsApp('${safeId}')" title="שלח לקבוצת הוואטסאפ"
-                                        class="px-2.5 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 text-xs font-semibold transition">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                    </button>
-                                    <button onclick="toggleEventCompleted('${safeId}')" title="סמן כהושלם"
-                                        class="px-2.5 py-1.5 rounded-lg text-xs font-semibold ${isDone ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-50 hover:text-emerald-700'} transition">
-                                        <i class="fa-solid fa-check"></i>
-                                    </button>
-                                    <button onclick="duplicateEvent('${safeId}')" title="שכפל אירוע"
-                                        class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 text-xs font-semibold transition">
-                                        <i class="fa-regular fa-copy"></i>
-                                    </button>
-                                    <button onclick="openEventModal('${safeId}')" title="ערוך אירוע"
-                                        class="px-2.5 py-1.5 rounded-lg bg-accent-50 text-accent-700 hover:bg-accent-100 text-xs font-semibold transition">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </button>
-                                    <button onclick="promptDeleteEvent('${safeId}')" title="מחק אירוע"
-                                        class="px-2.5 py-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </button>
-                                </div>
-                            ` : ''}
+        const FEED_GROUPS = [
+            { key: "pinned", title: "נעוצים", icon: "fa-solid fa-thumbtack" },
+            { key: "now", title: "היום ופתוח עכשיו", icon: "fa-solid fa-bolt" },
+            { key: "week", title: "השבוע", icon: "fa-regular fa-calendar-check" },
+            { key: "nextWeek", title: "שבוע הבא", icon: "fa-regular fa-calendar-plus" },
+            { key: "later", title: "בהמשך", icon: "fa-regular fa-calendar" }
+        ];
+
+        function renderEventsFeed() {
+            const container = document.getElementById('events-feed-container');
+            const emptyState = document.getElementById('empty-state');
+            const now = new Date();
+            const weekStart = startOfWeekSunday(now);
+
+            const filtered = state.events
+                .filter(ev => state.activeFilter === "all" || ev.category === state.activeFilter)
+                .filter(ev => !state.hideCompleted || !ev.completed)
+                .filter(ev => {
+                    if (!state.searchQuery) return true;
+                    const hay = `${ev.title} ${ev.description} ${ev.location} ${ev.date} ${ev.customCategory || ""}`.toLowerCase();
+                    return hay.includes(state.searchQuery);
+                });
+
+            // Split into sections by time
+            const groups = { pinned: [], now: [], week: [], nextWeek: [], later: [] };
+            const past = [];
+
+            filtered.forEach(ev => {
+                const info = getTimeInfo(ev, now);
+                if (info.status === "past") { past.push(ev); return; }
+                if (ev.pinned) { groups.pinned.push(ev); return; }
+
+                const { start } = getEventWindow(ev);
+                if (info.status === "ongoing" || dayDiff(start, now) <= 0) { groups.now.push(ev); return; }
+
+                const weekIndex = Math.floor(Math.round((startOfDay(start) - weekStart) / 86400000) / 7);
+                if (weekIndex <= 0) groups.week.push(ev);
+                else if (weekIndex === 1) groups.nextWeek.push(ev);
+                else groups.later.push(ev);
+            });
+
+            const byStart = (a, b) => {
+                const diff = getEventWindow(a).start - getEventWindow(b).start;
+                return diff !== 0 ? diff : (a.title || "").localeCompare(b.title || "", "he");
+            };
+            Object.values(groups).forEach(list => list.sort(byStart));
+            past.sort((a, b) => getEventWindow(b).end - getEventWindow(a).end);
+
+            const upcomingCount = Object.values(groups).reduce((sum, list) => sum + list.length, 0);
+
+            if (upcomingCount === 0 && past.length === 0) {
+                container.innerHTML = "";
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            let html = "";
+
+            if (upcomingCount === 0) {
+                html += `
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-6 text-center">
+                        <i class="fa-regular fa-calendar-check text-2xl text-slate-400 mb-1.5"></i>
+                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200">אין אירועים קרובים</p>
+                    </div>`;
+            }
+
+            FEED_GROUPS.forEach(def => {
+                const list = groups[def.key];
+                if (list.length === 0) return;
+                html += `
+                    <div class="space-y-3" data-group="${def.key}">
+                        <h4 class="flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200">
+                            <i class="${def.icon} text-accent-600"></i>
+                            <span>${def.title}</span>
+                            <span class="text-xs font-semibold text-slate-400">(${list.length})</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${list.map(ev => buildEventCardHTML(ev, now)).join('')}
                         </div>
-                    </article>
-                `;
-            }).join('');
+                    </div>`;
+            });
+
+            if (past.length > 0) {
+                html += `
+                    <div data-group="past">
+                        <button type="button" onclick="togglePastEvents()" id="toggle-past-btn"
+                            class="w-full flex items-center justify-between gap-2 text-sm font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-accent-200 rounded-xl px-4 py-3 transition">
+                            <span class="flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                                <span>אירועים שעברו</span>
+                                <span class="text-xs font-semibold text-slate-400">(${past.length})</span>
+                            </span>
+                            <i class="fa-solid ${state.showPast ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs text-slate-400"></i>
+                        </button>
+                        ${state.showPast ? `
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                ${past.map(ev => buildEventCardHTML(ev, now)).join('')}
+                            </div>
+                        ` : ''}
+                    </div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        window.togglePastEvents = function() {
+            state.showPast = !state.showPast;
+            renderEventsFeed();
+        };
+
+        // The big colored card at the top of the page: the next thing that matters, with a countdown.
+        function renderNextUp() {
+            const section = document.getElementById("next-up-section");
+            const card = document.getElementById("next-up-card");
+            if (!section || !card) return;
+
+            const now = new Date();
+            const ev = pickNextUpEvent(now);
+            if (!ev) {
+                section.classList.add("hidden");
+                card.innerHTML = "";
+                return;
+            }
+
+            const cat = getCategoryInfo(ev);
+            const safeId = escapeHTML(ev.id);
+            const safeDate = escapeHTML(ev.date);
+            const safeLink = ev.link ? sanitizeSafeUrl(ev.link, "") : "";
+            const linkBtn = safeLink
+                ? `<a href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" class="next-up-link inline-flex items-center gap-2 bg-white font-bold text-sm px-4 py-2.5 rounded-xl shadow-xs hover:bg-white/90 transition" style="color: var(--accent-700)"><i class="fa-solid fa-arrow-up-right-from-square text-xs"></i><span>${escapeHTML(ev.linkLabel || "פתח קישור")}</span></a>`
+                : "";
+
+            section.classList.remove("hidden");
+            card.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+                    <div class="min-w-0">
+                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold bg-white/20 px-3 py-1 rounded-full">
+                                <i class="fa-solid fa-bolt"></i><span>האירוע הבא</span>
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-xs font-bold bg-white/15 px-3 py-1 rounded-full">
+                                <i class="${cat.icon}"></i><span>${cat.label}</span>
+                            </span>
+                        </div>
+                        <div id="next-up-countdown" class="text-3xl sm:text-4xl font-extrabold leading-tight">${escapeHTML(getHeroCountdownText(ev, now))}</div>
+                        <h2 id="next-up-title" class="text-lg sm:text-xl font-bold mt-1 break-words">${escapeHTML(ev.title)}</h2>
+                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm font-medium text-white/90 mt-2.5">
+                            ${buildMetaHTML(ev, "text-white/75")}
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 shrink-0">
+                        ${linkBtn}
+                        <button type="button" onclick="openCalendarOnDate('${safeDate}')" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 font-semibold text-sm px-4 py-2.5 rounded-xl transition">
+                            <i class="fa-regular fa-calendar-days"></i><span>בלוח שנה</span>
+                        </button>
+                        <button type="button" onclick="downloadEventICS('${safeId}')" class="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 font-semibold text-sm px-4 py-2.5 rounded-xl transition">
+                            <i class="fa-solid fa-calendar-plus"></i><span>שמור ליומן</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Keeps sections / countdowns fresh without a page reload (events move to "past", "tomorrow" becomes "today", ...).
+        function liveTick() {
+            if (computeFeedSignature() !== lastFeedSignature) renderAll();
+            else renderNextUp();
+        }
+
+        function startLiveTicker() {
+            setInterval(liveTick, 60000);
+            document.addEventListener("visibilitychange", () => {
+                if (!document.hidden) liveTick();
+            });
         }
 
         window.downloadEventICS = function(id) {
@@ -1689,7 +2150,7 @@
             if (!ev || !ev.date) return;
             const cleanDate = ev.date.replace(/-/g, "");
             const start = ev.startTime ? `${cleanDate}T${ev.startTime.replace(":", "")}00` : `${cleanDate}T090000`;
-            const end = ev.endTime ? `${cleanDate}T${ev.endTime.replace(":", "")}00` : (ev.startTime ? `${cleanDate}T${ev.startTime.replace(":", "")}00` : `${cleanDate}T100000`);
+            const end = ev.closeDate ? `${ev.closeDate.replace(/-/g, "")}T${(ev.closeTime || "23:59").replace(":", "")}00` : ev.endTime ? `${cleanDate}T${ev.endTime.replace(":", "")}00` : (ev.startTime ? `${cleanDate}T${ev.startTime.replace(":", "")}00` : `${cleanDate}T100000`);
             const escapeICS = (s) => String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
 
             const ics = [
@@ -1733,6 +2194,8 @@
                 `🕒 ${formatTimeRange(ev.startTime, ev.endTime)}`
             ];
             if (ev.location) lines.push(`📍 ${ev.location}`);
+            if (ev.closeDate) lines.push(`⏳ פתוח עד ${formatFullHebrewDate(ev.closeDate)}${ev.closeTime ? " " + ev.closeTime : ""}`);
+            if (ev.link) lines.push(`🔗 ${ev.link}`);
             if (ev.description) lines.push("", ev.description);
             lines.push("", `לכל העדכונים: ${buildShareableUrl()}`);
 
@@ -1798,9 +2261,10 @@
 
             const byDate = {};
             state.events.forEach(ev => {
-                if (!ev.date) return;
-                if (!byDate[ev.date]) byDate[ev.date] = [];
-                byDate[ev.date].push(ev);
+                getEventDates(ev).forEach(iso => {
+                    if (!byDate[iso]) byDate[iso] = [];
+                    byDate[iso].push(ev);
+                });
             });
 
             let html = "";
@@ -1815,7 +2279,7 @@
                 const isToday = todayISO === isoDate;
 
                 const dotsHTML = dayEvents.slice(0, 3).map(ev => {
-                    const cat = CATEGORIES[ev.category] || CATEGORIES.general;
+                    const cat = getCategoryInfo(ev);
                     return `<div class="text-[10px] font-bold truncate px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full shrink-0 ${cat.dotClass}"></span>
                         <span class="truncate">${escapeHTML(ev.title)}</span>
@@ -1871,7 +2335,7 @@
             titleEl.textContent = `אירועים ליום ${formatFullHebrewDate(state.selectedDate)}`;
 
             const dayEvents = state.events
-                .filter(ev => ev.date === state.selectedDate)
+                .filter(ev => getEventDates(ev).includes(state.selectedDate))
                 .sort((a, b) => (a.startTime || "").localeCompare(b.startTime || ""));
 
             if (dayEvents.length === 0) {
@@ -1884,7 +2348,7 @@
             }
 
             container.innerHTML = dayEvents.map(ev => {
-                const cat = CATEGORIES[ev.category] || CATEGORIES.general;
+                const cat = getCategoryInfo(ev);
                 const isDone = Boolean(ev.completed);
                 const safeId = escapeHTML(ev.id);
                 return `
@@ -1895,7 +2359,7 @@
                                 <span>${cat.label}</span>
                             </span>
                             <span class="text-xs font-bold text-slate-600 dark:text-slate-300">
-                                ${formatTimeRange(ev.startTime, ev.endTime)}
+                                ${formatEventTimeShort(ev)}
                             </span>
                         </div>
                         <div class="font-bold text-slate-900 dark:text-white text-sm ${isDone ? 'line-through' : ''}">
@@ -1903,6 +2367,7 @@
                         </div>
                         ${ev.location ? `<div class="text-xs text-accent-700 font-medium"><i class="fa-solid fa-location-dot ml-1"></i>${escapeHTML(ev.location)}</div>` : ''}
                         <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed whitespace-pre-line">${formatDescriptionWithLinks(ev.description)}</p>
+                        ${buildLinkButtonHTML(ev, true)}
                         ${state.isAdmin ? `
                             <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-end gap-1.5">
                                 <button onclick="shareEventToWhatsApp('${safeId}')" class="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold">
@@ -2230,6 +2695,40 @@
             openEventModal(null, state.selectedDate);
         };
 
+        const DEFAULT_CUSTOM_TYPES = ["חג", "ביטול שיעור", "בוחן מודל", "שינוי מועד"];
+
+        // Suggestions in the type box: types already used in events + a few common ones.
+        function refreshCustomCategorySuggestions() {
+            const list = document.getElementById("custom-category-suggestions");
+            if (!list) return;
+            const used = state.events
+                .filter(ev => ev.category === "custom" && ev.customCategory)
+                .map(ev => ev.customCategory);
+            const unique = [...new Set([...used, ...DEFAULT_CUSTOM_TYPES])];
+            list.innerHTML = "";
+            unique.forEach(text => {
+                const opt = document.createElement("option");
+                opt.value = text;
+                list.appendChild(opt);
+            });
+        }
+
+        // Shows the free-text box only when the category is "אחר", and requires it then.
+        function syncCustomCategoryField() {
+            const isCustom = document.getElementById("event-category").value === "custom";
+            const input = document.getElementById("event-custom-category");
+            input.classList.toggle("hidden", !isCustom);
+            input.required = isCustom;
+            if (!isCustom) input.value = "";
+            refreshCustomCategorySuggestions();
+        }
+
+        window.handleCategoryChange = function() {
+            syncCustomCategoryField();
+            const input = document.getElementById("event-custom-category");
+            if (!input.classList.contains("hidden")) input.focus();
+        };
+
         window.openEventModal = function(eventId = null, prefillDate = null) {
             if (!assertAdminAuthorized()) return;
             const form = document.getElementById('event-form');
@@ -2246,6 +2745,11 @@
                 document.getElementById('event-start-time').value = ev.startTime || "";
                 document.getElementById('event-end-time').value = ev.endTime || "";
                 document.getElementById('event-category').value = ev.category || "general";
+                document.getElementById('event-custom-category').value = ev.customCategory || "";
+                document.getElementById('event-close-date').value = ev.closeDate || "";
+                document.getElementById('event-close-time').value = ev.closeTime || "";
+                document.getElementById('event-link').value = ev.link || "";
+                document.getElementById('event-link-label').value = ev.linkLabel || "";
                 document.getElementById('event-location').value = ev.location || "";
                 document.getElementById('event-description').value = ev.description || "";
                 document.getElementById('event-completed').checked = Boolean(ev.completed);
@@ -2258,6 +2762,7 @@
                 document.getElementById('event-pinned').checked = false;
             }
 
+            syncCustomCategoryField();
             openModal('event-modal');
         };
 
@@ -2266,12 +2771,23 @@
             if (!assertAdminAuthorized()) return;
 
             const id = document.getElementById('event-id').value;
+            const rawOpenDate = document.getElementById('event-date').value;
+            const rawCloseDate = document.getElementById('event-close-date').value;
+            if (rawCloseDate && rawOpenDate && rawCloseDate < rawOpenDate) {
+                showToast("תאריך הסגירה חייב להיות אחרי תאריך הפתיחה", "error");
+                return;
+            }
             const payload = validateEventPayload({
                 title: document.getElementById('event-title').value,
                 date: document.getElementById('event-date').value,
                 startTime: document.getElementById('event-start-time').value,
                 endTime: document.getElementById('event-end-time').value,
                 category: document.getElementById('event-category').value,
+                customCategory: document.getElementById('event-custom-category').value,
+                closeDate: document.getElementById('event-close-date').value,
+                closeTime: document.getElementById('event-close-time').value,
+                link: document.getElementById('event-link').value,
+                linkLabel: document.getElementById('event-link-label').value,
                 location: document.getElementById('event-location').value,
                 description: document.getElementById('event-description').value,
                 completed: document.getElementById('event-completed').checked,
@@ -2517,6 +3033,20 @@
                 setTimeout(() => div.remove(), 250);
             }, 2800);
         }
+
+        // Escape closes the top-most open window.
+        // Later windows in the HTML sit on top of earlier ones, so we look from the last to the first.
+        const MODAL_IDS_IN_ORDER = ["calendar-modal", "password-modal", "event-modal", "header-edit-modal", "links-edit-modal", "share-info-modal", "cloud-setup-modal", "delete-confirm-modal"];
+        document.addEventListener("keydown", (e) => {
+            if (e.key !== "Escape") return;
+            for (let i = MODAL_IDS_IN_ORDER.length - 1; i >= 0; i--) {
+                const el = document.getElementById(MODAL_IDS_IN_ORDER[i]);
+                if (el && !el.classList.contains("hidden")) {
+                    el.classList.add("hidden");
+                    break;
+                }
+            }
+        });
 
         initApp();
     </script>
