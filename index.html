@@ -6,6 +6,9 @@
     <title>קורס אנגלית — רמת בסיסי | מכללת אשקלון</title>
     <meta name="description" content="לוח אירועים ועדכונים לקורס אנגלית — רמת בסיסי, מכללת אשקלון. מבחנים, פרזנטציות והגשות במקום אחד.">
     <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Basic English">
 
     <!-- Link preview (WhatsApp / social). The image file og-image.png must sit next to index.html in the repo. -->
     <meta property="og:type" content="website">
@@ -95,10 +98,7 @@
         [data-mode="dark"] .bg-accent-100 { background-color: rgba(255, 255, 255, 0.1) !important; }
         [data-mode="dark"] .text-accent-600,
         [data-mode="dark"] .text-accent-700,
-        [data-mode="dark"] .text-accent-800 { color: #f472b6 !important; }
-        [data-mode="dark"][data-theme="blue"] .text-accent-600,
-        [data-mode="dark"][data-theme="blue"] .text-accent-700,
-        [data-mode="dark"][data-theme="blue"] .text-accent-800 { color: #60a5fa !important; }
+        [data-mode="dark"] .text-accent-800 { color: var(--accent-text-dark) !important; }
         [data-mode="dark"] .border-accent-200,
         [data-mode="dark"] .border-accent-100 { border-color: rgba(148, 163, 184, 0.25) !important; }
 
@@ -109,6 +109,123 @@
             from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* ===== More color themes (text color for dark mode comes from --accent-text-dark) ===== */
+        :root { --accent-text-dark: #60a5fa; }
+        [data-theme="pink"] { --accent-text-dark: #f472b6; }
+        [data-theme="green"] {
+            --accent-50: #f0fdf4; --accent-100: #dcfce7; --accent-200: #bbf7d0; --accent-500: #22c55e;
+            --accent-600: #16a34a; --accent-700: #15803d; --accent-800: #166534;
+            --accent-ring: rgba(22, 163, 74, 0.25); --accent-text-dark: #4ade80;
+        }
+        [data-theme="orange"] {
+            --accent-50: #fff7ed; --accent-100: #ffedd5; --accent-200: #fed7aa; --accent-500: #f97316;
+            --accent-600: #ea580c; --accent-700: #c2410c; --accent-800: #9a3412;
+            --accent-ring: rgba(234, 88, 12, 0.25); --accent-text-dark: #fb923c;
+        }
+        [data-theme="purple"] {
+            --accent-50: #faf5ff; --accent-100: #f3e8ff; --accent-200: #e9d5ff; --accent-500: #a855f7;
+            --accent-600: #9333ea; --accent-700: #7e22ce; --accent-800: #6b21a8;
+            --accent-ring: rgba(147, 51, 234, 0.25); --accent-text-dark: #c084fc;
+        }
+        .theme-swatch { width: 20px; height: 20px; border-radius: 9999px; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(100, 116, 139, 0.4); transition: transform .15s ease, box-shadow .15s ease; }
+        .theme-swatch:hover { transform: scale(1.18); }
+        .theme-swatch.is-active { box-shadow: 0 0 0 2px var(--accent-600); }
+        [data-mode="dark"] .theme-swatch { border-color: #1e293b; }
+
+        /* ===== Page background, glass, shadows ===== */
+        body {
+            background-image:
+                radial-gradient(900px 420px at 88% -60px, var(--accent-100), transparent 72%),
+                radial-gradient(700px 380px at 4% 28%, var(--accent-50), transparent 70%);
+            background-repeat: no-repeat;
+        }
+        [data-mode="dark"] body { background-image: radial-gradient(900px 420px at 88% -60px, rgba(148, 163, 184, 0.12), transparent 72%); }
+        .glass-bar {
+            background: rgba(255, 255, 255, 0.72);
+            -webkit-backdrop-filter: blur(14px) saturate(1.4);
+            backdrop-filter: blur(14px) saturate(1.4);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 10px 30px -18px rgba(15, 23, 42, 0.45);
+        }
+        [data-mode="dark"] .glass-bar { background: rgba(15, 23, 42, 0.72); border-color: rgba(148, 163, 184, 0.2); }
+        .sticky-filter { position: sticky; top: calc(var(--admin-bar-h, 0px) + 8px); z-index: 30; }
+        #events-feed-container { scroll-margin-top: calc(var(--admin-bar-h, 0px) + 96px); }
+        #category-filters { min-width: 0; flex: 1 1 auto; }
+        @media (max-width: 639px) {
+            #category-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+            #category-filters::-webkit-scrollbar { display: none; }
+            #category-filters .filter-btn { flex-shrink: 0; white-space: nowrap; }
+        }
+
+        /* ===== Header: big English title + decorative bubbles ===== */
+        .hero-en {
+            font-weight: 800; font-size: clamp(2.4rem, 9vw, 4.5rem); line-height: 1.05; text-align: right; letter-spacing: -0.02em; padding: 0.1em 0;
+            background: linear-gradient(90deg, var(--accent-600), var(--accent-800));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        [data-mode="dark"] .hero-en { background: linear-gradient(90deg, var(--accent-text-dark), var(--accent-500)); -webkit-background-clip: text; background-clip: text; }
+
+        /* ===== Week strip ===== */
+        .week-chip {
+            display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 72px; padding: .55rem .15rem .5rem;
+            border-radius: 1rem; cursor: pointer; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(148, 163, 184, 0.35);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+            transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+        }
+        .week-chip:hover { transform: translateY(-2px); box-shadow: 0 8px 18px -10px rgba(15, 23, 42, 0.35); }
+        .week-chip-name { font-size: .7rem; font-weight: 700; color: #64748b; }
+        .week-chip-num { font-size: 1.15rem; font-weight: 800; color: #0f172a; line-height: 1.1; }
+        .week-chip-dots { display: flex; gap: 3px; align-items: center; min-height: 6px; }
+        .week-chip-dots i { display: block; width: 6px; height: 6px; border-radius: 9999px; }
+        .week-chip.is-today { border-color: var(--accent-600); box-shadow: inset 0 0 0 1px var(--accent-600); }
+        .week-chip.is-today .week-chip-name { color: var(--accent-700); }
+        .week-chip.is-selected { background: var(--accent-600); border-color: var(--accent-600); }
+        .week-chip.is-selected .week-chip-name, .week-chip.is-selected .week-chip-num { color: #fff; }
+        .week-nav { width: 2rem; height: 2rem; border-radius: .75rem; display: inline-flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(148, 163, 184, 0.35); color: #475569; }
+        [data-mode="dark"] .week-chip { background: rgba(30, 41, 59, 0.7); border-color: rgba(148, 163, 184, 0.25); }
+        [data-mode="dark"] .week-chip-name { color: #94a3b8; }
+        [data-mode="dark"] .week-chip-num { color: #f1f5f9; }
+        [data-mode="dark"] .week-chip.is-today .week-chip-name { color: var(--accent-text-dark); }
+        [data-mode="dark"] .week-chip.is-selected { background: var(--accent-600); }
+        [data-mode="dark"] .week-nav { background: rgba(30, 41, 59, 0.7); color: #cbd5e1; border-color: rgba(148, 163, 184, 0.25); }
+
+        /* ===== Motion ===== */
+        @keyframes pulseSoft { 0%, 100% { box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.35); } 50% { box-shadow: 0 0 0 6px rgba(244, 63, 94, 0); } }
+        .countdown-badge[data-level="urgent"] { animation: pulseSoft 2.4s ease-in-out infinite; }
+        @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .float-slow { animation: floatY 7s ease-in-out infinite; }
+        .float-slower { animation: floatY 9s ease-in-out infinite reverse; }
+        .event-card {
+            border-radius: 1.5rem !important;
+            transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 10px 28px -16px rgba(15, 23, 42, 0.25);
+        }
+        .event-card:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05), 0 18px 36px -16px rgba(15, 23, 42, 0.35); }
+        [data-mode="dark"] .event-card { box-shadow: 0 10px 28px -16px rgba(0, 0, 0, 0.7); }
+        .stagger > * { animation: fadeIn .35s ease-out backwards; }
+        .stagger > *:nth-child(2) { animation-delay: .05s; }
+        .stagger > *:nth-child(3) { animation-delay: .10s; }
+        .stagger > *:nth-child(4) { animation-delay: .15s; }
+        .stagger > *:nth-child(5) { animation-delay: .20s; }
+        .stagger > *:nth-child(n+6) { animation-delay: .25s; }
+        button:not(:disabled):active { transform: scale(.97); }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+        }
+
+        /* ===== Keyboard focus ===== */
+        button:focus-visible, a:focus-visible, select:focus-visible, [role="button"]:focus-visible { outline: 3px solid var(--accent-500) !important; outline-offset: 2px; }
+        input:focus-visible, textarea:focus-visible { box-shadow: 0 0 0 3px var(--accent-ring); border-color: var(--accent-500) !important; }
+
+        /* ===== Holiday look for the "next up" card ===== */
+        .next-up-card { position: relative; overflow: hidden; }
+        .next-up-card.holiday {
+            background:
+                radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.28), transparent 42%),
+                linear-gradient(135deg, #f59e0b 0%, #db2777 55%, #7c3aed 100%);
+        }
+        .next-up-card.holiday::after { content: "✨ 🎉 ✨"; position: absolute; left: 1rem; top: .6rem; font-size: 1.5rem; letter-spacing: .3rem; opacity: .75; }
 
         /* Header: soft gradient + decorative blurred shapes */
         .site-header { background: linear-gradient(180deg, var(--accent-50) 0%, #ffffff 75%); }
@@ -196,6 +313,23 @@
         <div class="accent-blob pointer-events-none absolute -top-24 -left-20 w-72 h-72 rounded-full blur-3xl"></div>
         <div class="accent-blob pointer-events-none absolute -bottom-28 -right-16 w-64 h-64 rounded-full blur-3xl"></div>
         <div class="relative max-w-5xl mx-auto px-4 pt-5 pb-8 sm:pt-7 sm:pb-10">
+            <div class="hero-decor pointer-events-none absolute left-0 top-16 hidden lg:block text-accent-600" aria-hidden="true">
+                <svg width="270" height="190" viewBox="0 0 270 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g class="float-slow">
+                        <path d="M40 22H158a22 22 0 0 1 22 22V78a22 22 0 0 1-22 22H100L74 120V100H40a22 22 0 0 1-22-22V44a22 22 0 0 1 22-22z" fill="currentColor" opacity=".92"/>
+                        <text x="99" y="68" text-anchor="middle" font-family="Heebo, sans-serif" font-size="30" font-weight="800" fill="#fff">Hello!</text>
+                    </g>
+                    <g class="float-slower">
+                        <rect x="112" y="124" width="134" height="52" rx="22" fill="currentColor" opacity=".45"/>
+                        <path d="M214 174l22 16v-16z" fill="currentColor" opacity=".45"/>
+                        <text x="179" y="160" text-anchor="middle" font-family="Heebo, sans-serif" font-size="26" font-weight="800" fill="#fff">ABC</text>
+                    </g>
+                    <g class="float-slow" style="animation-delay:-3s">
+                        <rect x="205" y="14" width="48" height="48" rx="12" fill="currentColor" opacity=".25" transform="rotate(10 229 38)"/>
+                        <text x="229" y="48" text-anchor="middle" font-family="Heebo, sans-serif" font-size="28" font-weight="800" fill="currentColor" transform="rotate(10 229 38)">A</text>
+                    </g>
+                </svg>
+            </div>
             <!-- Top Row: Date Badge + Theme/Mode Toggles + Share + Admin Login -->
             <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
                 <div class="inline-flex items-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium">
@@ -204,25 +338,25 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <!-- Color Theme Switcher (Blue / Pink) -->
-                    <div class="inline-flex items-center bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full p-0.5" title="בחירת צבע עיצוב">
-                        <button id="theme-blue-btn" onclick="setAccentTheme('blue')" type="button"
-                            class="px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-blue-600 inline-block"></span>
-                            <span>כחול</span>
-                        </button>
-                        <button id="theme-pink-btn" onclick="setAccentTheme('pink')" type="button"
-                            class="px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1">
-                            <span class="w-2.5 h-2.5 rounded-full bg-pink-600 inline-block"></span>
-                            <span>ורוד</span>
-                        </button>
+                    <!-- Color Theme Switcher -->
+                    <div class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-2.5 py-1.5" role="group" aria-label="בחירת צבע עיצוב">
+                        <button id="theme-blue-btn" type="button" onclick="setAccentTheme('blue')" class="theme-swatch" style="background:#2563eb" aria-label="כחול" title="כחול"></button>
+                        <button id="theme-pink-btn" type="button" onclick="setAccentTheme('pink')" class="theme-swatch" style="background:#db2777" aria-label="ורוד" title="ורוד"></button>
+                        <button id="theme-green-btn" type="button" onclick="setAccentTheme('green')" class="theme-swatch" style="background:#16a34a" aria-label="ירוק" title="ירוק"></button>
+                        <button id="theme-orange-btn" type="button" onclick="setAccentTheme('orange')" class="theme-swatch" style="background:#ea580c" aria-label="כתום" title="כתום"></button>
+                        <button id="theme-purple-btn" type="button" onclick="setAccentTheme('purple')" class="theme-swatch" style="background:#9333ea" aria-label="סגול" title="סגול"></button>
                     </div>
-
                     <!-- Light / Dark Mode Toggle -->
                     <button id="dark-mode-toggle" onclick="toggleDarkMode()" type="button" title="מצב בהיר / כהה"
                         class="text-xs sm:text-sm text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
                         <i id="dark-mode-icon" class="fa-solid fa-moon text-accent-600"></i>
                         <span id="dark-mode-label" class="hidden sm:inline">מצב כהה</span>
+                    </button>
+
+                    <!-- Add to home screen (phones only) -->
+                    <button id="install-hint-btn" type="button" onclick="openInstallModal()" class="sm:hidden text-xs text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 font-semibold">
+                        <i class="fa-solid fa-mobile-screen-button text-accent-600"></i>
+                        <span>הוסף למסך הבית</span>
                     </button>
 
                     <!-- WhatsApp Share -->
@@ -245,12 +379,14 @@
                     <i class="fa-solid fa-graduation-cap"></i>
                     <span>לוח אירועים ועדכונים קבוצתי</span>
                 </div>
-                <h1 id="site-title" class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+                <div class="hero-en" dir="ltr" lang="en" aria-hidden="true">Basic English</div>
+                <h1 id="site-title" class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
                     אנגלית — רמת בסיסי | מכללת אשקלון
                 </h1>
                 <p id="site-subtitle" class="text-slate-600 dark:text-slate-400 text-base sm:text-lg font-medium">
                     המרצה: בלה בוטראשוילי
                 </p>
+                <p id="greeting-line" class="text-sm sm:text-base font-semibold text-accent-700 pt-1"></p>
             </div>
 
             <!-- Pinned Announcement Banner -->
@@ -276,16 +412,34 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-7 space-y-6">
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 pt-7 pb-28 sm:pb-8 space-y-6">
 
         <!-- "Next up" card (filled by renderNextUp) -->
         <section id="next-up-section" class="hidden fade-in">
             <div id="next-up-card" class="next-up-card rounded-2xl p-5 sm:p-6 text-white shadow-lg"></div>
         </section>
 
-<!-- Filter Pills + Search + Quick Links Row -->
-        <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+<!-- Week strip (filled by renderWeekStrip) -->
+        <section id="week-strip-section" class="space-y-2">
+            <div class="flex items-center justify-between gap-2 px-1">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-sm sm:text-base font-extrabold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-days text-accent-600"></i>
+                        <span id="week-strip-title">השבוע</span>
+                    </h2>
+                    <button type="button" id="week-today-btn" onclick="goThisWeek()" class="hidden text-xs font-bold text-accent-700 bg-accent-50 hover:bg-accent-100 border border-accent-200 px-2.5 py-1 rounded-full">חזרה להיום</button>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button type="button" onclick="changeWeek(-1)" aria-label="שבוע קודם" class="week-nav"><i class="fa-solid fa-chevron-right text-xs"></i></button>
+                    <button type="button" onclick="changeWeek(1)" aria-label="שבוע הבא" class="week-nav"><i class="fa-solid fa-chevron-left text-xs"></i></button>
+                </div>
+            </div>
+            <div id="week-strip" class="grid grid-cols-7 gap-1.5 sm:gap-2"></div>
+        </section>
+
+        <!-- Sticky category bar -->
+        <div id="sticky-filter-bar" class="sticky-filter glass-bar rounded-2xl px-3 py-2.5">
+            <div class="flex items-center justify-between gap-2">
                 <!-- Category Pills with Counts -->
                 <div id="category-filters" class="flex flex-wrap items-center gap-1.5">
                     <button data-filter="all" class="filter-btn active px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition bg-accent-600 text-white shadow-xs">
@@ -309,12 +463,15 @@
                 </div>
 
                 <!-- Quick Open Calendar Button -->
-                <button onclick="openCalendarModal()" class="self-start md:self-auto text-xs sm:text-sm font-bold text-accent-700 hover:text-accent-800 bg-accent-50 hover:bg-accent-100 border border-accent-200 px-3.5 py-1.5 rounded-xl transition flex items-center gap-2">
+                <button onclick="openCalendarModal()" aria-label="פתיחת לוח שנה" class="shrink-0 text-xs sm:text-sm font-bold text-accent-700 hover:text-accent-800 bg-accent-50 hover:bg-accent-100 border border-accent-200 px-3.5 py-1.5 rounded-xl transition flex items-center gap-2">
                     <i class="fa-regular fa-calendar-days"></i>
-                    <span>פתיחת לוח שנה אינטראקטיבי</span>
+                    <span class="hidden sm:inline">פתיחת לוח שנה אינטראקטיבי</span>
                 </button>
             </div>
+        </div>
 
+        <!-- Search + Quick Links Row -->
+        <section class="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-5 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-4 transition-colors">
             <!-- Live Search Bar -->
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -881,6 +1038,43 @@
         </div>
     </div>
 
+<!-- 6.8 Add to home screen -->
+    <div id="install-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-accent-100 text-accent-700 flex items-center justify-center text-lg"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                    <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">הוסף את האתר למסך הבית</h3>
+                </div>
+                <button onclick="closeModal('install-modal')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-2 rounded-lg" aria-label="סגור">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <p class="text-sm text-slate-600 dark:text-slate-300">האתר ייפתח במסך מלא עם אייקון משלו, כמו אפליקציה.</p>
+            <div class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+                    <p class="font-bold mb-1.5"><i class="fa-brands fa-apple ml-1.5"></i>באייפון (ב-Safari)</p>
+                    <ol class="list-decimal pr-5 space-y-1">
+                        <li>לחץ על כפתור השיתוף (ריבוע עם חץ למעלה).</li>
+                        <li>גלול ובחר "הוסף למסך הבית".</li>
+                        <li>לחץ "הוסף".</li>
+                    </ol>
+                </div>
+                <div class="rounded-xl border border-slate-200 dark:border-slate-700 p-3">
+                    <p class="font-bold mb-1.5"><i class="fa-brands fa-android ml-1.5"></i>באנדרואיד (ב-Chrome)</p>
+                    <ol class="list-decimal pr-5 space-y-1">
+                        <li>לחץ על שלוש הנקודות בפינה.</li>
+                        <li>בחר "הוסף למסך הבית" או "התקן אפליקציה".</li>
+                        <li>אשר.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="flex justify-end pt-1">
+                <button onclick="closeModal('install-modal')" class="px-4 py-2 rounded-xl text-sm font-bold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition">הבנתי</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 7. Delete Confirmation Modal -->
     <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 dark:border-slate-700 fade-in text-center">
@@ -992,30 +1186,35 @@
                 label: "מבחנים",
                 badgeClass: "bg-rose-50 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800",
                 dotClass: "bg-rose-500",
+                tileClass: "bg-rose-600 text-white",
                 icon: "fa-solid fa-file-signature"
             },
             presentation: {
                 label: "פרזנטציות",
                 badgeClass: "bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800",
                 dotClass: "bg-purple-500",
+                tileClass: "bg-purple-600 text-white",
                 icon: "fa-solid fa-person-chalkboard"
             },
             assignment: {
                 label: "הגשות",
                 badgeClass: "bg-amber-50 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800",
                 dotClass: "bg-amber-500",
+                tileClass: "bg-amber-400 text-amber-950",
                 icon: "fa-solid fa-file-pen"
             },
             general: {
                 label: "הודעות",
                 badgeClass: "bg-sky-50 dark:bg-sky-950/70 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800",
                 dotClass: "bg-sky-500",
+                tileClass: "bg-sky-600 text-white",
                 icon: "fa-solid fa-circle-info"
             },
             custom: {
                 label: "אחר",
                 badgeClass: "bg-teal-50 dark:bg-teal-950/70 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800",
                 dotClass: "bg-teal-500",
+                tileClass: "bg-teal-600 text-white",
                 icon: "fa-solid fa-tag"
             }
         };
@@ -1032,6 +1231,8 @@
             searchQuery: "",
             hideCompleted: false,
             showPast: false,
+            weekOffset: 0,
+            dayFilter: "",
             viewYear: 2026,
             viewMonth: 10,
             selectedDate: "2026-11-29",
@@ -1055,7 +1256,7 @@
                 const raw = localStorage.getItem(UI_PREFS_KEY);
                 const systemDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
                 const prefs = raw ? JSON.parse(raw) : { theme: "blue", mode: systemDark ? "dark" : "light" };
-                applyAccentTheme(prefs.theme === "pink" ? "pink" : "blue", false);
+                applyAccentTheme(THEME_PALETTE[prefs.theme] ? prefs.theme : "blue", false);
                 applyDarkMode(prefs.mode === "dark" ? "dark" : "light", false);
             } catch {
                 applyAccentTheme("blue", false);
@@ -1071,33 +1272,30 @@
             } catch {}
         }
 
+        const THEME_PALETTE = {
+            blue: { name: "כחולה", main: "#2563eb", light: "#dbeafe" },
+            pink: { name: "ורודה", main: "#db2777", light: "#fce7f3" },
+            green: { name: "ירוקה", main: "#16a34a", light: "#dcfce7" },
+            orange: { name: "כתומה", main: "#ea580c", light: "#ffedd5" },
+            purple: { name: "סגולה", main: "#9333ea", light: "#f3e8ff" }
+        };
+
         function applyAccentTheme(theme, persist = true) {
+            if (!THEME_PALETTE[theme]) theme = "blue";
             document.documentElement.setAttribute("data-theme", theme);
-            const blueBtn = document.getElementById("theme-blue-btn");
-            const pinkBtn = document.getElementById("theme-pink-btn");
+
+            Object.keys(THEME_PALETTE).forEach(key => {
+                const btn = document.getElementById(`theme-${key}-btn`);
+                if (btn) btn.classList.toggle("is-active", key === theme);
+            });
+
             const calHeader = document.getElementById("widget-cal-header");
             const calHighlight = document.getElementById("widget-cal-highlight");
-
-            if (blueBtn && pinkBtn) {
-                if (theme === "pink") {
-                    pinkBtn.className = "px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-pink-600 text-white shadow-xs";
-                    blueBtn.className = "px-2.5 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900";
-                } else {
-                    blueBtn.className = "px-2.5 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-blue-600 text-white shadow-xs";
-                    pinkBtn.className = "px-2.5 py-1 rounded-full text-xs font-semibold transition flex items-center gap-1 text-slate-600 dark:text-slate-300 hover:text-slate-900";
-                }
-            }
-
             if (calHeader && calHighlight) {
-                if (theme === "pink") {
-                    calHeader.setAttribute("fill", "#DB2777");
-                    calHighlight.setAttribute("fill", "#FCE7F3");
-                    calHighlight.setAttribute("stroke", "#DB2777");
-                } else {
-                    calHeader.setAttribute("fill", "#2563EB");
-                    calHighlight.setAttribute("fill", "#DBEAFE");
-                    calHighlight.setAttribute("stroke", "#2563EB");
-                }
+                const t = THEME_PALETTE[theme];
+                calHeader.setAttribute("fill", t.main);
+                calHighlight.setAttribute("fill", t.light);
+                calHighlight.setAttribute("stroke", t.main);
             }
 
             if (persist) saveUIPreferences();
@@ -1121,7 +1319,7 @@
 
         window.setAccentTheme = function(theme) {
             applyAccentTheme(theme, true);
-            showToast(theme === "pink" ? "ערכת עיצוב ורודה הופעלה" : "ערכת עיצוב כחולה הופעלה", "info");
+            showToast(`ערכת עיצוב ${THEME_PALETTE[theme] ? THEME_PALETTE[theme].name : ""} הופעלה`, "info");
         };
 
         window.toggleDarkMode = function() {
@@ -1578,6 +1776,8 @@
             renderSelectedDayDetails();
             updateWidgetBadge();
             renderNextUp();
+            renderGreeting();
+            renderWeekStrip();
             lastFeedSignature = computeFeedSignature();
         }
 
@@ -1832,12 +2032,137 @@
             }).join("|");
         }
 
+        // ==================== EXTRAS: holiday look, greeting, week strip ====================
+
+        const HOLIDAY_WORDS = ["חג", "חנוכה", "פורים", "פסח", "סוכות", "שבועות", "ראש השנה", "יום כיפור", "שמחת תורה", "העצמאות", 'ל"ג בעומר'];
+        const HOLIDAY_STYLE = {
+            badgeClass: "bg-yellow-50 dark:bg-yellow-950/70 text-yellow-800 dark:text-yellow-300 border-yellow-300 dark:border-yellow-800",
+            dotClass: "bg-yellow-500",
+            tileClass: "bg-yellow-400 text-yellow-950",
+            icon: "fa-solid fa-star"
+        };
+
+        function isHoliday(ev) {
+            return ev.category === "custom" && HOLIDAY_WORDS.some(word => String(ev.customCategory || "").includes(word));
+        }
+
+        // "ערב טוב 👋 · היום: אירוע אחד · השבוע: 3 אירועים"
+        function getGreetingText(now = new Date()) {
+            const h = now.getHours();
+            const hello = h < 5 ? "לילה טוב" : h < 12 ? "בוקר טוב" : h < 17 ? "צהריים טובים" : h < 21 ? "ערב טוב" : "לילה טוב";
+            const nextWeekStart = startOfWeekSunday(now);
+            nextWeekStart.setDate(nextWeekStart.getDate() + 7);
+            const todayStart = startOfDay(now);
+
+            let today = 0;
+            let week = 0;
+            state.events.forEach(ev => {
+                if (ev.completed || !ev.date) return;
+                const { start, end } = getEventWindow(ev);
+                if (now > end) return;
+                if (start < nextWeekStart) week++;
+                if (startOfDay(start) <= todayStart) today++;
+            });
+
+            const plural = n => n === 0 ? "אין אירועים" : n === 1 ? "אירוע אחד" : `${n} אירועים`;
+            return `${hello} 👋 · היום: ${plural(today)} · השבוע: ${plural(week)}`;
+        }
+
+        function renderGreeting() {
+            const el = document.getElementById("greeting-line");
+            if (el) el.textContent = getGreetingText();
+        }
+
+        // Seven day chips (Sunday to Saturday) with a dot per event. Tap a day to filter the list.
+        function renderWeekStrip() {
+            const el = document.getElementById("week-strip");
+            if (!el) return;
+
+            const now = new Date();
+            const first = startOfWeekSunday(now);
+            first.setDate(first.getDate() + state.weekOffset * 7);
+            const todayISO = getTodayISO();
+
+            const byDate = {};
+            state.events.forEach(ev => getEventDates(ev).forEach(iso => {
+                (byDate[iso] = byDate[iso] || []).push(ev);
+            }));
+
+            let html = "";
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(first);
+                d.setDate(first.getDate() + i);
+                const iso = toISODate(d.getFullYear(), d.getMonth() + 1, d.getDate());
+                const evs = byDate[iso] || [];
+                const dots = evs.slice(0, 3).map(ev => `<i class="${getCategoryInfo(ev).dotClass}"></i>`).join("");
+                const cls = ["week-chip", iso === todayISO ? "is-today" : "", iso === state.dayFilter ? "is-selected" : ""].join(" ").trim();
+                const aria = escapeHTML(formatFullHebrewDate(iso)) + (evs.length ? `, ${evs.length} אירועים` : "");
+                html += `
+                    <button type="button" data-day="${iso}" onclick="selectWeekDay('${iso}')" class="${cls}" aria-label="${aria}">
+                        <span class="week-chip-name">${WEEKDAY_LABELS[d.getDay()].replace("יום ", "")}</span>
+                        <span class="week-chip-num">${d.getDate()}</span>
+                        <span class="week-chip-dots">${dots}</span>
+                    </button>`;
+            }
+            el.innerHTML = html;
+
+            const last = new Date(first);
+            last.setDate(first.getDate() + 6);
+            // <bdi dir="ltr"> keeps "22–28" in the right order inside right-to-left text.
+            const range = first.getMonth() === last.getMonth()
+                ? `<bdi dir="ltr">${first.getDate()}–${last.getDate()}</bdi> ${HEBREW_MONTHS[first.getMonth()]}`
+                : `${first.getDate()} ${HEBREW_MONTHS[first.getMonth()]} – ${last.getDate()} ${HEBREW_MONTHS[last.getMonth()]}`;
+            const label = state.weekOffset === 0 ? "השבוע" : state.weekOffset === 1 ? "שבוע הבא" : state.weekOffset === -1 ? "שבוע שעבר" : "";
+            const title = document.getElementById("week-strip-title");
+            if (title) title.innerHTML = label ? `${label} · ${range}` : range;
+            const todayBtn = document.getElementById("week-today-btn");
+            if (todayBtn) todayBtn.classList.toggle("hidden", state.weekOffset === 0);
+        }
+
+        window.selectWeekDay = function(iso) {
+            state.dayFilter = state.dayFilter === iso ? "" : iso;
+            renderWeekStrip();
+            renderEventsFeed();
+            if (state.dayFilter) {
+                const feed = document.getElementById("events-feed-container");
+                if (feed && feed.scrollIntoView) feed.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        };
+
+        window.clearDayFilter = function() {
+            state.dayFilter = "";
+            renderWeekStrip();
+            renderEventsFeed();
+        };
+
+        window.changeWeek = function(delta) {
+            state.weekOffset += delta;
+            renderWeekStrip();
+        };
+
+        window.goThisWeek = function() {
+            state.weekOffset = 0;
+            renderWeekStrip();
+        };
+
+        window.openInstallModal = function() {
+            openModal('install-modal');
+        };
+
+        // The admin bar is sticky too; the filter bar sits just below it.
+        function syncStickyOffset() {
+            const bar = document.getElementById("admin-toolbar");
+            const h = bar && !bar.classList.contains("hidden") ? bar.offsetHeight : 0;
+            document.documentElement.style.setProperty("--admin-bar-h", h + "px");
+        }
+
         // Returns badge info for an event. For custom types the label is the text the admin typed.
         // The label returned here is already HTML-escaped and safe to put inside innerHTML.
         function getCategoryInfo(ev) {
             const base = CATEGORIES[ev.category] || CATEGORIES.general;
             if (ev.category === "custom") {
-                return { ...base, label: escapeHTML(ev.customCategory || base.label) };
+                const custom = { ...base, label: escapeHTML(ev.customCategory || base.label) };
+                return isHoliday(ev) ? { ...custom, ...HOLIDAY_STYLE } : custom;
             }
             return base;
         }
@@ -1847,7 +2172,7 @@
             const weekday = new Date(y, m - 1, d).getDay();
             return `
                 <div class="date-tile shrink-0 w-14 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-center shadow-xs">
-                    <div class="${cat.dotClass} text-white text-[10px] font-bold py-0.5">${WEEKDAY_LABELS[weekday]}</div>
+                    <div class="${cat.tileClass || (cat.dotClass + ' text-white')} text-[10px] font-bold py-0.5">${WEEKDAY_LABELS[weekday]}</div>
                     <div class="text-2xl font-extrabold leading-none pt-1.5 text-slate-900 dark:text-white">${d}</div>
                     <div class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 pb-1.5 pt-0.5">${MONTHS_SHORT[m - 1]}</div>
                 </div>`;
@@ -1894,7 +2219,7 @@
             const countdownBadge = `<span data-level="${info.level}" class="countdown-badge inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border ${LEVEL_BADGE_CLASSES[info.level]}"><i class="${isPast ? 'fa-solid fa-flag-checkered' : 'fa-solid fa-hourglass-half'} text-[10px]"></i><span>${escapeHTML(info.label)}</span></span>`;
 
             return `
-                <article data-event-id="${safeId}" class="relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl py-5 pr-6 pl-5 border ${isPinned ? 'border-accent-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-700' : 'border-slate-200/90 dark:border-slate-800'} hover:border-accent-300 shadow-xs transition flex flex-col justify-between fade-in ${(isPast || isDone) ? 'opacity-70' : ''}">
+                <article data-event-id="${safeId}" class="event-card relative overflow-hidden bg-white dark:bg-slate-900 rounded-2xl py-5 pr-6 pl-5 border ${isPinned ? 'border-accent-200 ring-1 ring-inset ring-slate-200 dark:ring-slate-700' : 'border-slate-200/90 dark:border-slate-800'} hover:border-accent-300 shadow-xs transition flex flex-col justify-between fade-in ${(isPast || isDone) ? 'opacity-70' : ''}">
                     <span class="category-stripe absolute inset-y-0 right-0 w-1.5 ${cat.dotClass}"></span>
                     <div class="flex items-start gap-4">
                         ${buildDateTileHTML(ev, cat)}
@@ -1981,10 +2306,17 @@
             const emptyState = document.getElementById('empty-state');
             const now = new Date();
             const weekStart = startOfWeekSunday(now);
+            const showPastNow = state.showPast || !!state.dayFilter;
+            const dayNote = state.dayFilter ? `
+                <div class="flex items-center justify-between gap-3 bg-accent-50 border border-accent-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-accent-700">
+                    <span><i class="fa-solid fa-filter ml-1.5"></i>מוצגים אירועים של ${escapeHTML(formatFullHebrewDate(state.dayFilter))}</span>
+                    <button type="button" onclick="clearDayFilter()" class="underline font-bold">הצג הכל</button>
+                </div>` : "";
 
             const filtered = state.events
                 .filter(ev => state.activeFilter === "all" || ev.category === state.activeFilter)
                 .filter(ev => !state.hideCompleted || !ev.completed)
+                .filter(ev => !state.dayFilter || getEventDates(ev).includes(state.dayFilter))
                 .filter(ev => {
                     if (!state.searchQuery) return true;
                     const hay = `${ev.title} ${ev.description} ${ev.location} ${ev.date} ${ev.customCategory || ""}`.toLowerCase();
@@ -2019,13 +2351,13 @@
             const upcomingCount = Object.values(groups).reduce((sum, list) => sum + list.length, 0);
 
             if (upcomingCount === 0 && past.length === 0) {
-                container.innerHTML = "";
+                container.innerHTML = dayNote;
                 emptyState.classList.remove('hidden');
                 return;
             }
             emptyState.classList.add('hidden');
 
-            let html = "";
+            let html = dayNote;
 
             if (upcomingCount === 0) {
                 html += `
@@ -2045,7 +2377,7 @@
                             <span>${def.title}</span>
                             <span class="text-xs font-semibold text-slate-400">(${list.length})</span>
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="stagger grid grid-cols-1 md:grid-cols-2 gap-4">
                             ${list.map(ev => buildEventCardHTML(ev, now)).join('')}
                         </div>
                     </div>`;
@@ -2061,10 +2393,10 @@
                                 <span>אירועים שעברו</span>
                                 <span class="text-xs font-semibold text-slate-400">(${past.length})</span>
                             </span>
-                            <i class="fa-solid ${state.showPast ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs text-slate-400"></i>
+                            <i class="fa-solid ${showPastNow ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs text-slate-400"></i>
                         </button>
-                        ${state.showPast ? `
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        ${showPastNow ? `
+                            <div class="stagger grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                                 ${past.map(ev => buildEventCardHTML(ev, now)).join('')}
                             </div>
                         ` : ''}
@@ -2102,6 +2434,7 @@
                 : "";
 
             section.classList.remove("hidden");
+            card.classList.toggle("holiday", isHoliday(ev));
             card.innerHTML = `
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-5">
                     <div class="min-w-0">
@@ -2135,7 +2468,7 @@
         // Keeps sections / countdowns fresh without a page reload (events move to "past", "tomorrow" becomes "today", ...).
         function liveTick() {
             if (computeFeedSignature() !== lastFeedSignature) renderAll();
-            else renderNextUp();
+            else { renderNextUp(); renderGreeting(); }
         }
 
         function startLiveTicker() {
@@ -2493,6 +2826,7 @@
                 if (el.tagName === 'BUTTON' || el.tagName === 'DIV') el.classList.add('inline-flex');
             });
             renderAll();
+            syncStickyOffset();
             if (notify) showToast("מצב עריכה מאובטח הופעל", "success");
         }
 
@@ -2508,6 +2842,7 @@
                 el.classList.remove('inline-flex');
             });
             renderAll();
+            syncStickyOffset();
             showToast("התנתקת ממצב עריכה", "info");
         };
 
@@ -3034,9 +3369,18 @@
             }, 2800);
         }
 
+        window.addEventListener("resize", syncStickyOffset);
+
+        // Hide the "add to home screen" hint when the site already runs as an installed app.
+        (function hideInstallHintIfStandalone() {
+            const standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true;
+            const btn = document.getElementById("install-hint-btn");
+            if (standalone && btn) btn.classList.add("hidden");
+        })();
+
         // Escape closes the top-most open window.
         // Later windows in the HTML sit on top of earlier ones, so we look from the last to the first.
-        const MODAL_IDS_IN_ORDER = ["calendar-modal", "password-modal", "event-modal", "header-edit-modal", "links-edit-modal", "share-info-modal", "cloud-setup-modal", "delete-confirm-modal"];
+        const MODAL_IDS_IN_ORDER = ["calendar-modal", "password-modal", "event-modal", "header-edit-modal", "links-edit-modal", "share-info-modal", "cloud-setup-modal", "install-modal", "delete-confirm-modal"];
         document.addEventListener("keydown", (e) => {
             if (e.key !== "Escape") return;
             for (let i = MODAL_IDS_IN_ORDER.length - 1; i >= 0; i--) {
